@@ -15,9 +15,11 @@ MonoBehaviour:
   modePlayers:
   - playerName: Avi
     playerType: 0
-    playerIcon: 0
+    isOnline: 0
+    playerIconIndex: 0
     playerIconSprite: {fileID: 0}
   - playerName: AI29998
-    playerType: 0
-    playerIcon: 0
+    playerType: 1
+    isOnline: 0
+    playerIconIndex: 0
     playerIconSprite: {fileID: 0}

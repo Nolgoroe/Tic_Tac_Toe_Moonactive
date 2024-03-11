@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class GameView : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] PlayerBase currentPlayer;
+
+    public void InitGameView()
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public void UpdateCurrentPlayerRef(PlayerBase _currentPlayer)
     {
-        
+        currentPlayer = _currentPlayer;
+        //also update name of player in UI
+        // also maybe animate something...
+    }
+
+    public void UpdateCellView(Cell selectedCell)
+    {
+        selectedCell.MarkCell(currentPlayer);
     }
 }

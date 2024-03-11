@@ -6,7 +6,10 @@ using System.Linq;
 
 public class GameController : MonoBehaviour
 {
-    public PlayerBase currentPlayer; //temp public??
+    [SerializeField] int width = 3; //temp?? maybe outside information?
+    [SerializeField] int height = 3; //temp?? maybe outside information?
+
+    [SerializeField] PlayerBase currentPlayer;
 
 
 
@@ -16,6 +19,7 @@ public class GameController : MonoBehaviour
     [SerializeField] PlayerFactory playerFactory;
 
     [SerializeField] Cell cellPrefab;
+    [SerializeField] Transform cellsParent;
 
     [SerializeField] GameModeSO[] allGameModes; //temp? - LOAD ALL ON STARTUP
 
@@ -30,8 +34,14 @@ public class GameController : MonoBehaviour
         InitGameModel(0);
 
         //init game view
+        InitGameView();
 
-        // Randomise Starting Player
+        int combinedAmountOfCells = width * height;
+        for (int i = 0; i < combinedAmountOfCells; i++)
+        {
+            Cell c = Instantiate(cellPrefab, cellsParent);
+            c.OnClickOnCell += gameViewRef.UpdateCellView;
+        }
     }
 
     private void InitGameModel(int modelID)
@@ -41,16 +51,17 @@ public class GameController : MonoBehaviour
         PlayerBase[] players = PlayerFactory.GetPlayers(chosenGameMode).ToArray();
 
         //the starting player is the player with the X type - it's randomised in the factory to one of the players
-        currentPlayer = players.Where(x => x.publicPlyerData.playerIcon == PlayerIcons.X).FirstOrDefault();
-        if (!currentPlayer)
-        {
-            Debug.Log("Error finding first player!");
-            return;
-        }
+        currentPlayer = players.Where(x => x.publicPlyerData.playerIconIndex == PlayerIcons.O).FirstOrDefault();
 
         //Init game model
         gameModelRef.InitGameModel(chosenGameMode, players);
 
         gameModelRef.Test();
+    }
+
+    private void InitGameView()
+    {
+        gameViewRef.InitGameView();
+        gameViewRef.UpdateCurrentPlayerRef(currentPlayer);
     }
 }

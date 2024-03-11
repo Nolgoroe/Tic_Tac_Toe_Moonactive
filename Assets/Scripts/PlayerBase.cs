@@ -10,22 +10,21 @@ public struct PlayerData
     public bool isOnline;
 
     [HideInInspector]
-    public PlayerIcons playerIcon;
+    public PlayerIcons playerIconIndex;
 
     [HideInInspector]
     public Sprite playerIconSprite;
 
 }
-public class PlayerBase : MonoBehaviour
+public class PlayerBase
 {
     [SerializeField] PlayerData playerData;
 
     public PlayerBase(string _playerName, Sprite _playerIconSprite, PlayerTypes _playerType, PlayerIcons _playerIcon) //this whole thing... temp??
     {
-        //name.... temp flag
         playerData.playerName = _playerName;
         playerData.playerType = _playerType;
-        playerData.playerIcon = _playerIcon;
+        playerData.playerIconIndex = _playerIcon;
         playerData.playerIconSprite = _playerIconSprite;
     }
 
