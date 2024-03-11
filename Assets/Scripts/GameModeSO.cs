@@ -7,10 +7,14 @@ public class GameModeSO : ScriptableObject
 {
     [SerializeField] int width = 3;
     [SerializeField] int height = 3;
+    [SerializeField] float timeForTurn = 5;
+    [SerializeField] bool allowUndo = false;
 
     [SerializeField] PlayerData[] modePlayers;
 
     public PlayerData[] publicModePlayers => modePlayers;
     public Vector2 boardWidthAndHeight => new Vector2(width, height);
+    public float modeTimeForTurn => timeForTurn;
+    public bool modelAllowUndo => allowUndo;
 
 }

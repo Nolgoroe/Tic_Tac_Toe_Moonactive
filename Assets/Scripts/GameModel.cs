@@ -112,6 +112,7 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
 
         return false;
     }
+
     public bool ReturnWinColumn()
     {
         // 0,0 is top Left.
@@ -266,5 +267,10 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
 
 
         return foundCell;
+    }
+
+    public GameModeSO ReturnCurrentGameModeSO()
+    {
+        return gameModeSO;
     }
 }

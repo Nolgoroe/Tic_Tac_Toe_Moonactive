@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameView : MonoBehaviour
 {
     [SerializeField] PlayerBase currentPlayer;
+    [SerializeField] GameObject undoButton;
 
     public void InitGameView()
     {
@@ -21,5 +23,10 @@ public class GameView : MonoBehaviour
     public void UpdateCellView(Cell selectedCell)
     {
         selectedCell.MarkCell(currentPlayer);
+    }
+
+    public void ToggleUndoButton(bool enable)
+    {
+        undoButton.gameObject.SetActive(enable);
     }
 }

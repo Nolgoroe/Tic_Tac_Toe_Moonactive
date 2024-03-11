@@ -19,6 +19,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     private void SetCellSprite(Sprite icon)
     {
         cellImage.sprite = icon;
+        cellImage.enabled = icon == null ? false : true;
     }
     private void SetIsMarked(bool _isMarked)
     {
@@ -31,6 +32,10 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
     public void ActivateOnClickOnCellAction()
     {
+        if (GameController.isGameOver) return; //temp???
+
+        Debug.Log("Detect Click");
+
         OnClickOnCell?.Invoke(this);
     }
 
@@ -42,9 +47,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (isMarked) return; //display a ui message here that the cell is not empty in the end. //temp
-
-        Debug.Log("Detect Click");
+        if (isMarked || GameController.Instance.ReturnCurrentPlayerIsAI()) return; //display a ui message here that the cell is not empty in the end. //temp
 
         ActivateOnClickOnCellAction();
     }
@@ -59,12 +62,12 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         SetMarkingPlayerIndex((int)currentPlayerData.playerIconIndex);
     }
 
-    //public void UnMarkCell()
-    //{
-    //    SetCellSprite(null); //destory the cell in the slot??
-    //    SetIsMarked(false);
-    //    SetMarkingPlayerIndex(EMPTY_CELL_INDEX); // -1 is default for empty.
-    //}
+    public void UnMarkCell()
+    {
+        SetCellSprite(null); //destory the cell in the slot??
+        SetIsMarked(false);
+        SetMarkingPlayerIndex(EMPTY_CELL_INDEX); // -1 is default for empty.
+    }
 
     public bool ReturnIsMarked()
     {
