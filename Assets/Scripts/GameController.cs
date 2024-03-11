@@ -34,11 +34,12 @@ public class GameController : MonoBehaviour
     }
     void Start()
     {
-        InitGame();
     }
 
     private void Update()
     {
+        if (isGameOver) return;
+
         if(Input.GetKeyDown(KeyCode.X)) //Temp
         {
             SceneManager.LoadScene(0);
@@ -55,12 +56,16 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private void InitGame()
+    private IEnumerator InitGame(GameModeSO gameModeSO)
     {
         isGameOver = false;
 
+        // do some view things here like animations and stuff to make the level start look cool, then after done - continue.
+        // use yield return and then view functions.
+
+        yield return null;
         //Init game Model
-        InitGameModel(0);
+        InitGameModel(gameModeSO); //is it ok we pass the game mode through to here?
 
         //init game view
         InitGameView();
@@ -75,10 +80,9 @@ public class GameController : MonoBehaviour
         StartCoroutine(gameModelRef.ReturnCurrentPlayer().TurnStart());
     }
 
-    private void InitGameModel(int modelID)
+    private void InitGameModel(GameModeSO chosenGameMode)
     {
         //Arrange needed data
-        GameModeSO chosenGameMode = allGameModes[modelID]; //temp - this will be from a button later on
         PlayerBase[] players = PlayerFactory.GetPlayers(chosenGameMode).ToArray();
 
         //Init game model
@@ -102,6 +106,7 @@ public class GameController : MonoBehaviour
         if (gameModelRef.ReturnWinRow() || gameModelRef.ReturnWinDiagonalLeftBotRightUp() || gameModelRef.ReturnWinDiagonalRightBotLeftUp() || gameModelRef.ReturnWinColumn())
         {
             //Do win display here.
+            isGameOver = true; //is this temp??
 
             return true;
         }
@@ -109,6 +114,7 @@ public class GameController : MonoBehaviour
         if (gameModelRef.CheckDraw())
         {
             //handle draw here.
+            isGameOver = true; //is this temp??
 
             return true;
         }
@@ -160,5 +166,13 @@ public class GameController : MonoBehaviour
 
         Debug.Log("Timed out");
         isGameOver = true; //is this temp??
+    }
+
+    public void SetChosenGameMode(GameModeSO gameModeSO)
+    {
+        // called from button
+        GameModeSO chosenGameMode = gameModeSO; 
+
+        StartCoroutine(InitGame(chosenGameMode)); //is this ok? to pass it through?
     }
 }
