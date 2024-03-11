@@ -231,6 +231,7 @@ GameObject:
   - component: {fileID: 283659880}
   - component: {fileID: 283659882}
   - component: {fileID: 283659883}
+  - component: {fileID: 283659884}
   m_Layer: 0
   m_Name: Game Controller
   m_TagString: Untagged
@@ -250,16 +251,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 389932bfe2537f44f87c96b5051fb753, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 3
-  height: 3
-  currentPlayer: {fileID: 0}
   gameViewRef: {fileID: 283659883}
   gameModelRef: {fileID: 283659882}
-  cellPrefab: {fileID: 3798668965438370259, guid: b6f6a5a730f04134bb5c4683d9db3a6a, type: 3}
-  cellsParent: {fileID: 136064483}
   allGameModes:
-  - {fileID: 11400000, guid: 81148bc3398457e42bc16bef144b1d2d, type: 2}
   - {fileID: 11400000, guid: 0c2ec24b4abf1cf41843a46a1e67f795, type: 2}
+  - {fileID: 11400000, guid: 81148bc3398457e42bc16bef144b1d2d, type: 2}
+  - {fileID: 11400000, guid: 23951f5ad3133214192c6e8a8e71626e, type: 2}
 --- !u!4 &283659881
 Transform:
   m_ObjectHideFlags: 0
@@ -286,10 +283,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d89fe9b532f64f4d839a92f13d9b19d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentIndexPlayerArray: 0
+  gameController: {fileID: 0}
   gameModeSO: {fileID: 0}
-  players: []
-  tempPreafb: {fileID: 7318273967041479401, guid: 46bb531e3389f7c4c939a2921fbae5e3, type: 3}
-  tempParent: {fileID: 136064483}
+  cellPrefab: {fileID: 3798668965438370259, guid: b6f6a5a730f04134bb5c4683d9db3a6a, type: 3}
+  cellsParent: {fileID: 136064483}
+  maxNumberOfCells: 0
+  currentFilledCells: 0
+  allGameCells: []
 --- !u!114 &283659883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -302,7 +303,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9419694cc43c04f876a3527d4fa4db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentPlayer: {fileID: 0}
+--- !u!114 &283659884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 283659879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 582473cd9474ceb4fafac86e4cdb8d3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,10 +17,12 @@ public struct PlayerData
     public Sprite playerIconSprite;
 
 }
-public class PlayerBase
+public abstract class PlayerBase
 {
     [SerializeField] PlayerData playerData;
 
+    public Action OnEndTurn; //temp public? do we need this event?
+    
     public PlayerBase(string _playerName, Sprite _playerIconSprite, PlayerTypes _playerType, PlayerIcons _playerIcon) //this whole thing... temp??
     {
         playerData.playerName = _playerName;
@@ -30,6 +33,22 @@ public class PlayerBase
 
 
 
+    public abstract IEnumerator TurnStart();
+    public abstract void TurnEnd();
 
-    public PlayerData publicPlyerData => playerData; //Temp
+
+
+
+
+
+
+
+
+    public PlayerData publicPlyerData => playerData;
+
+
+    private void OnDisable()
+    {
+        OnEndTurn = null;
+    }
 }

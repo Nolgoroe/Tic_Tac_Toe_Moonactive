@@ -4,4 +4,4 @@ using UnityEngine;
 
 public enum PlayerTypes { Human, AI}
 public enum PlayerIcons { X, O}
-public enum EndConditions { Win, Draw, Timeout}
+public enum EndConditions { Win, Draw, Timeout, None}

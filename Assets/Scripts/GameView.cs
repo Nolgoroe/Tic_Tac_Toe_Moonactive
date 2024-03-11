@@ -8,7 +8,7 @@ public class GameView : MonoBehaviour
 
     public void InitGameView()
     {
-
+        //nothing for now - maybe we don't need this function.
     }
 
     public void UpdateCurrentPlayerRef(PlayerBase _currentPlayer)

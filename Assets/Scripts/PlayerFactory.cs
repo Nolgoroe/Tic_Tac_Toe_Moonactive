@@ -48,15 +48,11 @@ public class PlayerFactory
         switch (playerIcon)
         {
             case PlayerIcons.X:
-                Debug.Log("Done here 1");
-
                 return Resources.Load<Sprite>("ExTarget");
             case PlayerIcons.O:
-                Debug.Log("Done here 2");
-
                 return Resources.Load<Sprite>("CircleTarget");
             default:
-                Debug.Log("Done here 3");
+                Debug.Log("Error here"); //Temp
 
                 return null;
         }
