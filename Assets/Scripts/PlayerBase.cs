@@ -21,9 +21,9 @@ public abstract class PlayerBase
 {
     [SerializeField] PlayerData playerData;
 
-    public Action OnEndTurn; //temp public? do we need this event?
+    public Action OnEndTurn;
     
-    public PlayerBase(string _playerName, Sprite _playerIconSprite, PlayerTypes _playerType, PlayerIcons _playerIcon) //this whole thing... temp??
+    public PlayerBase(string _playerName, Sprite _playerIconSprite, PlayerTypes _playerType, PlayerIcons _playerIcon)
     {
         playerData.playerName = _playerName;
         playerData.playerType = _playerType;
@@ -31,16 +31,8 @@ public abstract class PlayerBase
         playerData.playerIconSprite = _playerIconSprite;
     }
 
-
-
     public abstract IEnumerator TurnStart();
     public abstract void TurnEnd();
-
-
-
-
-
-
 
 
 

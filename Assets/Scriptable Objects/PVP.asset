@@ -12,12 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d73e8f717685b246adf918678ca4b76, type: 3}
   m_Name: PVP
   m_EditorClassIdentifier: 
+  requiredComboToWin: 3
+  width: 3
+  height: 3
+  timeForTurn: 5
+  allowUndo: 0
   modePlayers:
   - playerName: Avi
     playerType: 0
-    playerIcon: 0
+    isOnline: 0
+    playerIconIndex: 0
     playerIconSprite: {fileID: 0}
   - playerName: Adar
     playerType: 0
-    playerIcon: 0
+    isOnline: 0
+    playerIconIndex: 0
     playerIconSprite: {fileID: 0}

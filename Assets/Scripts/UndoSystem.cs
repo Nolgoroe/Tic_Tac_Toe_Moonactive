@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class UndoSystem : MonoBehaviour
 {
+    //The idea of this class is to, on every time a cell is marked - add it to a list of marked cells.
+    //This will then give me the option to, on a click on a button, iterate through an X amount of elements in the list and just call the "Unmark" func on those cells.
+    
     [SerializeField] List<Cell> cellsMarked;
     [SerializeField] int moveBackOnUndo = 2;
 
@@ -26,7 +29,8 @@ public class UndoSystem : MonoBehaviour
         int originalListCount = cellsMarked.Count;
         for (int i = originalListCount - 1; i >= originalListCount - moveBackOnUndo; i--)
         {
-            cellsMarked[i].UnMarkCell();
+            cellsMarked[i].OnRemoveCell?.Invoke(cellsMarked[i]);
+
             cellsMarked.RemoveAt(i);
         }
     }

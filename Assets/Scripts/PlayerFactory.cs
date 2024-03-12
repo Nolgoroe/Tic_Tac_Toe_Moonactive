@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class PlayerFactory
 {
-    //is this whole class temp??
-
+    //This class is responsible for creating players, like in a factory.
+    //Each player will be created knowing their name, connected data, randomised Icon, Sprite for Icon and type of player.
 
     public static List<PlayerBase> GetPlayers(GameModeSO gameMode)
     {
@@ -18,11 +18,11 @@ public class PlayerFactory
 
         foreach (PlayerData playerData in gameMode.publicModePlayers)
         {
-            int randomPlayerIconIndex = UnityEngine.Random.Range(0, availableTypes.Count);
+            int randomPlayerIconIndex = UnityEngine.Random.Range(0, availableTypes.Count); //randomise icon between X and O
 
             playerList.Add(CreatePlayer(playerData.playerName, playerData, availableTypes[randomPlayerIconIndex]));
 
-            availableTypes.RemoveAt(randomPlayerIconIndex);
+            availableTypes.RemoveAt(randomPlayerIconIndex); //remove the icon selected so that the next player created can only be another kind of player. This also supports scaling for more Icons.
         }
 
         return playerList;
@@ -52,7 +52,7 @@ public class PlayerFactory
             case PlayerIcons.O:
                 return Resources.Load<Sprite>("CircleTarget");
             default:
-                Debug.Log("Error here"); //Temp
+                Debug.Log("Error here - Could not fnid relavent sprite asset to return.");
 
                 return null;
         }

@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d73e8f717685b246adf918678ca4b76, type: 3}
   m_Name: CVC
   m_EditorClassIdentifier: 
+  requiredComboToWin: 3
   width: 3
   height: 3
+  timeForTurn: 5
+  allowUndo: 0
   modePlayers:
   - playerName: AI50000
     playerType: 1

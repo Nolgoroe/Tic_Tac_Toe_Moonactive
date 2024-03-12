@@ -1,3 +1,4 @@
+using PlasticGui.Help;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,14 +8,46 @@ using UnityEngine.UI;
 
 public class Cell : MonoBehaviour, IPointerClickHandler
 {
-    const int EMPTY_CELL_INDEX = -1;
+    const int EMPTY_CELL_INDEX = -1; //-1 indicates "empty" cell
 
+    [Header("References")]
     [SerializeField] Image cellImage;
+    [SerializeField] ParticleSystem hintParticle;
+
+    [Header("Gameplay")]
     [SerializeField] bool isMarked;
     [SerializeField] int MarkedIconIndex = EMPTY_CELL_INDEX; // this is set by the player enum - later used for checks. starts at -1 to indicate empty.
-    [SerializeField] Vector2 cellCoordinates = Vector2.zero; // this is set by the player enum - later used for checks. starts at -1 to indicate empty.
+    [SerializeField] Vector2 cellCoordinates = Vector2.zero;
 
-    public Action<Cell> OnClickOnCell; //temp public? do we need this event?
+    [Header("Animation")]
+    [SerializeField] float scaleUpSpeed; 
+
+    public Action<Cell> OnClickOnCell;
+    public Action<Cell> OnRemoveCell; 
+
+    public void InitCell(int x, int y)
+    {
+        cellCoordinates = new Vector2(x, y);
+    }
+
+    #region Marking and Unmarking
+    public void MarkCell(PlayerBase currentPlayer)
+    {
+        //is it ok for this function.. and other functions to be public because they are used as actions?
+        PlayerData currentPlayerData = currentPlayer.publicPlyerData;
+
+        SetCellSprite(currentPlayerData.playerIconSprite);
+        SetIsMarked(true);
+        SetMarkingPlayerIndex((int)currentPlayerData.playerIconIndex);
+    }
+
+    public void AnimateMark()
+    {
+        cellImage.transform.localScale = Vector3.zero;
+
+        LeanTween.scale(cellImage.gameObject, Vector3.one, scaleUpSpeed).setEaseOutBack();
+        SoundManager.Instance.PlaySoundOneShot(Sounds.MarkCell);
+    }
 
     private void SetCellSprite(Sprite icon)
     {
@@ -30,8 +63,27 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         MarkedIconIndex = _MarkedIconIndex;
     }
 
+    public void UnMarkCell()
+    {
+        SetCellSprite(null); //destory the cell in the slot??
+        SetIsMarked(false);
+        SetMarkingPlayerIndex(EMPTY_CELL_INDEX); // -1 is default for empty.
+    }
+
+    #endregion
+
+    #region Input Detection
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (isMarked || !GameController.Instance.ReturnCurrentPlayerIsHuman()) return; //display a ui message here that the cell is not empty in the end. //temp
+
+        ActivateOnClickOnCellAction();
+    }
+
     public void ActivateOnClickOnCellAction()
     {
+        //called directly from the AI player aswell to simulate click
+
         if (GameController.isGameOver) return; //temp???
 
         Debug.Log("Detect Click");
@@ -40,35 +92,9 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     }
 
 
-    public void InitCell(int x, int y)
-    {
-        cellCoordinates = new Vector2(x, y);
-    }
+    #endregion
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (isMarked || GameController.Instance.ReturnCurrentPlayerIsAI()) return; //display a ui message here that the cell is not empty in the end. //temp
-
-        ActivateOnClickOnCellAction();
-    }
-
-    public void MarkCell(PlayerBase currentPlayer)
-    {
-        //is it ok for this function.. and other functions to be public because they are used as actions?
-        PlayerData currentPlayerData = currentPlayer.publicPlyerData;
-
-        SetCellSprite(currentPlayerData.playerIconSprite);
-        SetIsMarked(true);
-        SetMarkingPlayerIndex((int)currentPlayerData.playerIconIndex);
-    }
-
-    public void UnMarkCell()
-    {
-        SetCellSprite(null); //destory the cell in the slot??
-        SetIsMarked(false);
-        SetMarkingPlayerIndex(EMPTY_CELL_INDEX); // -1 is default for empty.
-    }
-
+    #region Public Return Data
     public bool ReturnIsMarked()
     {
         return isMarked;
@@ -77,9 +103,20 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     {
         return MarkedIconIndex;
     }
+    #endregion
+
+    #region Public Actions
+    public void SetAsHint()
+    {
+        //spawn effect here that dies after X seconds.
+        hintParticle.gameObject.SetActive(true);
+        hintParticle.Play();
+    }
+    #endregion
 
     private void OnDisable()
     {
         OnClickOnCell = null;
+        OnRemoveCell = null;
     }
 }

@@ -4,32 +4,35 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class GameModel : MonoBehaviour //remove mono here // temp flag???
+public class GameModel : MonoBehaviour
 {
-    //do we need a constructor here.
-
-
-    [SerializeField] PlayerBase currentPlayer;
-    [SerializeField] int currentIndexPlayerArray = 0;
-
+    #region hidden data
     [HideInInspector]
     [SerializeField] GameController gameController;
 
     [HideInInspector]
     [SerializeField] GameModeSO gameModeSO;
-    [SerializeField] PlayerBase[] players;
+    #endregion
 
+    [Header("Player data")]
+    [SerializeField] int currentIndexPlayerArray = 0;
+    private PlayerBase[] players;
+    private PlayerBase currentPlayer;
+
+    [Header("Game Board Data")]
     [SerializeField] Cell cellPrefab;
     [SerializeField] Transform cellsParent;
-    [SerializeField] Cell[,] cellsArray;
+    [SerializeField] List<Cell> allGameCells;
+    private Cell[,] cellsArray;
 
+    [Header("End conditions data")]
     [SerializeField] int maxNumberOfCells;
     [SerializeField] int currentFilledCells;
 
-    [SerializeField] List<Cell> allGameCells;
 
-    //I was thinking of removing the monobehavior here and make this a stricly data script.
-    //I changed my mind since this script being a monobehavior allows me for easier debugging and more rapid word in the unity inspscor.
+
+
+    #region Public Actions
     public void InitGameModel(GameModeSO _gameModeSO, PlayerBase[] _players, GameController _gameController)
     {
         gameModeSO = _gameModeSO;
@@ -39,59 +42,86 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
 
         SpawnGridCells();
     }
-
-    private void SpawnGridCells()
+    public void CellMarkedOnBoard(Cell cell)
     {
-        int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
+        //added as event to OnClickOnCell for cell on spawn
 
-        maxNumberOfCells = boardWidth * boardHeight;
+        cell.MarkCell(currentPlayer);
 
-        cellsArray = new Cell[boardWidth, boardHeight];
+        currentFilledCells++;
 
-        for (int y = 0; y < boardHeight; y++)
+        if(ReturnIsHumanControlling())
         {
-            for (int x = 0; x < boardWidth; x++)
-            {
-                Cell cell = Instantiate(cellPrefab, cellsParent);
-                cell.InitCell(x, y);
-                cellsArray[x, y] = cell;
-                allGameCells.Add(cell);
-
-                gameController.ConnectCellToEvents(cell);
-            }
+            currentPlayer.TurnEnd(); //temp?? is this here?
         }
+    }
+    public void CellRemoveMarkOnBoard(Cell cell)
+    {
+        //added as event to OnRemoveCell for cell on spawn
 
-        //the starting player is the player with the X type - it's randomised in the factory to one of the players
-        currentPlayer = players.Where(x => x.publicPlyerData.playerIconIndex == PlayerIcons.X).FirstOrDefault();
-        currentIndexPlayerArray = System.Array.IndexOf(players, currentPlayer);
+        cell.UnMarkCell();
+
+        currentFilledCells--;
     }
 
-
-
-
-
-
-
-
-
-    public bool CheckDraw()
+    public void MoveToNextPlayer()
     {
-        if(currentFilledCells == maxNumberOfCells) Debug.Log("Draw"); //temp
+        //added as event to OnEndTurn for players on startup
+        //the reason this func is public is to allow me to centralize the addition of events on the game controller.
+        //this will allow for more organised and managable code.
 
+        currentIndexPlayerArray++;
+        if(currentIndexPlayerArray >= players.Length)
+        {
+            currentIndexPlayerArray = 0;
+        }
+
+        currentPlayer = players[currentIndexPlayerArray];
+    }
+
+    #endregion
+
+    #region End Condition Checkes
+
+    //the logic for winning is that I check cells in a direction for the ID of the current player index.
+    //if the count of consecutive ID'S reaches the count we set to win - that player won.
+    //for draw, I first check all other options and then, if no one won, I check that the board is full - if it is = draw.
+
+    public bool ReturnGeneralEndConditionMet(out EndConditions endCondition)
+    {
+        endCondition = EndConditions.None;
+
+        if (ReturnWinRow() || ReturnWinDiagonalLeftBotRightUp() || ReturnWinDiagonalRightBotLeftUp() || ReturnWinColumn())
+        {
+            endCondition = EndConditions.Win;
+            return true;
+        }
+
+        if (CheckDraw())
+        {
+            endCondition = EndConditions.Draw;
+            return true;
+        }
+
+        return false;
+
+    }
+    private bool CheckDraw()
+    {
         return currentFilledCells == maxNumberOfCells;
     }
 
-    public bool ReturnWinRow()
+    private bool ReturnWinRow()
     {
         // 0,0 is top Left.
+
         int currentScore = 0;
         int currentPlayerIconIndex = (int)currentPlayer.publicPlyerData.playerIconIndex;
 
         int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardWHeight = (int)gameModeSO.boardWidthAndHeight.y;
+        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
 
-        for (int row = 0; row < boardWHeight; row++)
+        for (int row = 0; row < boardHeight; row++)
         {
             currentScore = 0;
 
@@ -101,7 +131,7 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
                 {
                     currentScore++;
 
-                    if(currentScore == 3) // the number 3 is temp? also in all other win conditions
+                    if (currentScore == gameModeSO.modelRequiredComboToWin)
                     {
                         Debug.Log("Win in row");
                         return true;
@@ -113,26 +143,26 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
         return false;
     }
 
-    public bool ReturnWinColumn()
+    private bool ReturnWinColumn()
     {
         // 0,0 is top Left.
         int currentScore = 0;
         int currentPlayerIconIndex = (int)currentPlayer.publicPlyerData.playerIconIndex;
 
         int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardWHeight = (int)gameModeSO.boardWidthAndHeight.y;
+        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
 
         for (int column = 0; column < boardWidth; column++)
         {
             currentScore = 0;
 
-            for (int row = 0; row < boardWHeight; row++)
+            for (int row = 0; row < boardHeight; row++)
             {
                 if (cellsArray[column, row].ReturnMarkedIconIndex() == currentPlayerIconIndex)
                 {
                     currentScore++;
 
-                    if(currentScore == 3)
+                    if (currentScore == gameModeSO.modelRequiredComboToWin)
                     {
                         Debug.Log("Win in Col");
                         return true;
@@ -143,7 +173,7 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
 
         return false;
     }
-    public bool ReturnWinDiagonalLeftBotRightUp()
+    private bool ReturnWinDiagonalLeftBotRightUp()
     {
         // 0,2 is bottom Left.
 
@@ -151,9 +181,9 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
         int currentPlayerIconIndex = (int)currentPlayer.publicPlyerData.playerIconIndex;
 
         int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardWHeight = (int)gameModeSO.boardWidthAndHeight.y;
+        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
 
-        int rowOffset = boardWHeight;
+        int rowOffset = boardHeight;
 
         for (int column = 0; column < boardWidth; column++)
         {
@@ -163,7 +193,7 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
             {
                 currentScore++;
 
-                if (currentScore == 3)
+                if (currentScore == gameModeSO.modelRequiredComboToWin)
                 {
                     Debug.Log("Win diag 1");
                     return true;
@@ -173,7 +203,7 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
         }
         return false;
     }
-    public bool ReturnWinDiagonalRightBotLeftUp()
+    private bool ReturnWinDiagonalRightBotLeftUp()
     {
         // 2,2 is bottom Left.
 
@@ -181,10 +211,10 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
         int currentPlayerIconIndex = (int)currentPlayer.publicPlyerData.playerIconIndex;
 
         int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardWHeight = (int)gameModeSO.boardWidthAndHeight.y;
+        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
 
-        int columnOffset = boardWHeight;
-        int rowOffset = boardWHeight;
+        int columnOffset = boardWidth;
+        int rowOffset = boardHeight;
 
         for (int column = columnOffset - 1; column >= 0; column--)
         {
@@ -194,7 +224,7 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
             {
                 currentScore++;
 
-                if (currentScore == 3)
+                if (currentScore == gameModeSO.modelRequiredComboToWin)
                 {
                     Debug.Log("Win diag 2");
                     return true;
@@ -204,39 +234,9 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
         }
         return false;
     }
+    #endregion
 
-
-
-
-
-
-
-
-
-    public void CellMarkedOnBoard(Cell cell)
-    {
-        currentFilledCells++;
-
-        if(ReturnIsHumanControlling())
-        {
-            currentPlayer.TurnEnd(); //temp?? is this here?
-        }
-    }
-    public bool ReturnIsHumanControlling()
-    {
-        return currentPlayer.publicPlyerData.playerType == PlayerTypes.Human;
-    }
-
-    public void MoveToNextPlayer()
-    {
-        currentIndexPlayerArray++;
-        if(currentIndexPlayerArray >= players.Length)
-        {
-            currentIndexPlayerArray = 0;
-        }
-
-        currentPlayer = players[currentIndexPlayerArray];
-    }
+    #region Return Data
     public PlayerBase ReturnCurrentPlayer()
     {
         return currentPlayer;
@@ -244,6 +244,9 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
 
     public Cell ReturnRandomCellInArray()
     {
+        //used by the AI player to detect an empty cell to mark.
+        // must pass through the controller to enter this function.
+
         Cell foundCell = null;
         List<Cell> localcells = new List<Cell>();
         localcells.AddRange(allGameCells);
@@ -273,4 +276,41 @@ public class GameModel : MonoBehaviour //remove mono here // temp flag???
     {
         return gameModeSO;
     }
+
+    public bool ReturnIsHumanControlling()
+    {
+        return currentPlayer.publicPlyerData.playerType == PlayerTypes.Human;
+    }
+    #endregion
+
+    #region Private Actions
+
+
+    private void SpawnGridCells()
+    {
+        int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
+        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
+
+        maxNumberOfCells = boardWidth * boardHeight;
+
+        cellsArray = new Cell[boardWidth, boardHeight];
+
+        for (int y = 0; y < boardHeight; y++)
+        {
+            for (int x = 0; x < boardWidth; x++)
+            {
+                Cell cell = Instantiate(cellPrefab, cellsParent);
+                cell.InitCell(x, y);
+                cellsArray[x, y] = cell;
+                allGameCells.Add(cell);
+
+                gameController.ConnectCellToEvents(cell);
+            }
+        }
+
+        //the starting player is the player with the X type - it's randomised in the factory.
+        currentPlayer = players.Where(x => x.publicPlyerData.playerIconIndex == PlayerIcons.X).FirstOrDefault();
+        currentIndexPlayerArray = System.Array.IndexOf(players, currentPlayer);
+    }
+    #endregion
 }

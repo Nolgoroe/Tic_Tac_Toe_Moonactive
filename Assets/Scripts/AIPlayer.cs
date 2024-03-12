@@ -11,7 +11,9 @@ public class AIPlayer : PlayerBase
 
     public override IEnumerator TurnStart()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1f); //small delay for AI action, hardcoded
+
+
         //Choose random empty cell
         Cell localCell = GameController.Instance.ReturnRandomCell();
         if(localCell == null)
