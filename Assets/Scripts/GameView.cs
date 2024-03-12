@@ -47,6 +47,9 @@ public class GameView : MonoBehaviour
         SoundManager.Instance.PlaySoundFade(Sounds.MenuMusic);
     }
 
+
+
+    #region Public Actions
     public void InitGameView()
     {
         LeanTween.moveX(mainMenuParentObject, Screen.width, mainMenuTweenSpeed).setEaseInCirc().
@@ -55,23 +58,28 @@ public class GameView : MonoBehaviour
         SoundManager.Instance.StopSoundFade(Sounds.MenuMusic);
         SoundManager.Instance.PlaySoundFade(Sounds.GameMusic);
     }
-
     public void UpdatePlayerView(PlayerBase _currentPlayer)
     {
         currentPlayerName.text = _currentPlayer.publicPlyerData.playerName;
     }
 
+    public void AnimateCellMark(Cell cell)
+    {
+        cell.AnimateMark();
+    }
+
+    #endregion
+
+
+    #region Screen Management
     public void TogglePVCButtons(bool enable)
     {
         pvcButtonsParent.gameObject.SetActive(enable);
     }
-
-    
     private void ToggleScreen(bool _isOn, RectTransform screen)
     {
         screen.gameObject.SetActive(_isOn);
     }
-
     public void SetEndScreenText(EndConditions endCondition, PlayerBase player)
     {
         //I know there are some better ways to manage strings - is this enough?? temp flag.
@@ -103,15 +111,10 @@ public class GameView : MonoBehaviour
         LeanTween.move(endScreenPanel, Vector3.zero, endScreenTextTweenSpeed).setEaseOutBounce();
 
     }
-
     public void UpdateTurnTimer(float time)
     {
         timerText.text = "Time: " + Mathf.Ceil(time).ToString();
     }
 
-
-    public void AnimateCellMark(Cell cell)
-    {
-        cell.AnimateMark();
-    }
+    #endregion
 }
