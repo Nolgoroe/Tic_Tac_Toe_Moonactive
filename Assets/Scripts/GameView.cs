@@ -92,7 +92,7 @@ public class GameView : MonoBehaviour
                 SoundManager.Instance.PlaySoundOneShot(Sounds.Win);
                 break;
             case EndConditions.Draw:
-                text = "Draw";
+                text = "DRAW";
                 break;
             case EndConditions.Timeout:
                 text = player.publicPlyerData.playerName + " " + "Timeout... :(";
