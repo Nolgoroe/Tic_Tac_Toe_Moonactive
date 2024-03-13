@@ -166,10 +166,10 @@ public class GameController : MonoBehaviour
         //Used by AI to find cell to mark
         return gameModelRef.ReturnRandomCellInArray();
     }
-    public Cell ReturnAIChoice()
+    public Cell ReturnAIChoice(AILevel aiLevel)
     {
         //Used by AI to find cell to mark
-        return gameModelRef.CallMiniMaxAlgo();
+        return gameModelRef.CallMiniMaxAlgo(aiLevel);
     }
     public bool ReturnCurrentPlayerIsHuman()
     {

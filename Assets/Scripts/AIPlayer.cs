@@ -15,7 +15,7 @@ public class AIPlayer : PlayerBase
 
 
         //Choose random empty cell
-        Cell localCell = GameController.Instance.ReturnAIChoice();
+        Cell localCell = GameController.Instance.ReturnAIChoice(AILevel.Easy);
 
         //Populate that cell
         localCell.ActivateOnClickOnCellAction();

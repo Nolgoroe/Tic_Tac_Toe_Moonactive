@@ -325,7 +325,7 @@ public class GameModel : MonoBehaviour
 
     //Temp zone
     [ContextMenu("Test")]
-    public Cell CallMiniMaxAlgo()
+    public Cell CallMiniMaxAlgo(AILevel aiLevel)
     {
         //this will return a cell to the AI
         int bestScore = int.MinValue;
@@ -333,56 +333,61 @@ public class GameModel : MonoBehaviour
 
         int currentPlayerID = (int)currentPlayer.publicPlyerData.playerIconIndex;
 
-        for (int i = 0; i < 3; i++)
+        foreach (Cell cell in cellsArray)
         {
-            for (int j = 0; j < 3; j++)
+            if (!cell.ReturnIsMarked())
             {
-                if (!cellsArray[i, j].ReturnIsMarked())
+                cell.MarkCell(currentPlayer);
+                int score = minimax(cellsArray, (int)aiLevel, false, currentPlayerID, int.MinValue, int.MaxValue);
+                cell.UnMarkCell();
+
+
+                if (score > bestScore)
                 {
-                    cellsArray[i, j].MarkCell(currentPlayer);
-                    int score = minimax(cellsArray, 9, false, currentPlayerID);
-                    cellsArray[i, j].UnMarkCell();
-
-
-                    if (score > bestScore)
-                    {
-                        bestScore = score;
-                        chosenCell = cellsArray[i, j];
-                    }
+                    bestScore = score;
+                    chosenCell = cell;
                 }
             }
+
         }
 
         return chosenCell;
 
     }
 
-    public int minimax(Cell[,] cellsArray, int depth, bool isMaximizing, int playerID)
+    public int minimax(Cell[,] cellsArray, int depth, bool isMaximizing, int playerID, int alpha, int beta)
     {
         if (ReturnGeneralEndConditionMet(out EndConditions endCondition, cellsArray, playerID) || depth == 0)
         {
             return ReturnAlgoScore(endCondition, playerID, depth);
         }
 
+        int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
+        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
+
 
         if (isMaximizing)
         {
             int bestScore = int.MinValue;
 
-            for (int i = 0; i < 3; i++)
+            foreach (Cell cell in cellsArray)
             {
-                for (int j = 0; j < 3; j++)
+                if (!cell.ReturnIsMarked())
                 {
-                    if (!cellsArray[i, j].ReturnIsMarked())
+                    cell.MarkCell(currentPlayer);
+                    int score = minimax(cellsArray, depth - 1, false, ReturnNextPlayerID(playerID), alpha, beta);
+                    cell.UnMarkCell();
+
+                    bestScore = Mathf.Max(score, bestScore);
+
+                    alpha = Mathf.Max(alpha, score);
+                    if (beta <= alpha)
                     {
-                        cellsArray[i, j].MarkCell(currentPlayer);
-                        int score = minimax(cellsArray, depth - 1, false, ReturnNextPlayerID(playerID));
-                        cellsArray[i, j].UnMarkCell();
-
-                        bestScore = Mathf.Max(score, bestScore);
-
+                        break; // Beta cutoff
                     }
+
                 }
+
             }
 
             return bestScore;
@@ -391,19 +396,23 @@ public class GameModel : MonoBehaviour
         {
             int bestScore = int.MaxValue;
 
-            for (int i = 0; i < 3; i++)
+            foreach (Cell cell in cellsArray)
             {
-                for (int j = 0; j < 3; j++)
+                if (!cell.ReturnIsMarked())
                 {
-                    if (!cellsArray[i, j].ReturnIsMarked())
-                    {
-                        cellsArray[i, j].MarkCell(players[ReturnNextPlayerID(playerID)]);
-                        int score = minimax(cellsArray, depth - 1, true, ReturnNextPlayerID(playerID));
-                        cellsArray[i, j].UnMarkCell();
+                    cell.MarkCell(players[ReturnNextPlayerID(playerID)]);
+                    int score = minimax(cellsArray, depth - 1, true, ReturnNextPlayerID(playerID), alpha, beta);
+                    cell.UnMarkCell();
 
-                        bestScore = Mathf.Min(score, bestScore);
+                    bestScore = Mathf.Min(score, bestScore);
+
+                    beta = Mathf.Min(beta, score);
+                    if (beta <= alpha)
+                    {
+                        break; // Alpha cutoff
                     }
                 }
+
             }
 
             return bestScore;
@@ -415,10 +424,10 @@ public class GameModel : MonoBehaviour
         switch (condition)
         {
             case EndConditions.Win:
-                if (playerID == (int)currentPlayer.publicPlyerData.playerIconIndex) return 10 - depth;
+                if (playerID == (int)currentPlayer.publicPlyerData.playerIconIndex) return 10 + depth;
                 else
                 {
-                    return -10 + depth;
+                    return -10 - depth;
                 }
             case EndConditions.Draw:
                 return 0;
@@ -427,20 +436,6 @@ public class GameModel : MonoBehaviour
         }
 
         return -2;
-    }
-    private List<Cell> ReturnEmptyCellListFromArray(Cell[,] cellArray)
-    {
-        List<Cell> localCellList = new List<Cell>();
-
-        foreach (Cell cell in cellArray)
-        {
-            if (!cell.ReturnIsMarked())
-            {
-                localCellList.Add(cell);
-            }
-        }
-
-        return localCellList;
     }
 
     private int ReturnNextPlayerID(int currentPlayerID)
@@ -454,24 +449,5 @@ public class GameModel : MonoBehaviour
         }
 
         return playerID;
-    }
-
-    private Cell[,] HardCopyCellArray(Cell[,] toCopyArray) //temp??
-    {
-        int width = toCopyArray.GetLength(0);
-        int height = toCopyArray.GetLength(1);
-
-        Cell[,] localCellsArray = new Cell[width, height];
-
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                localCellsArray[x, y] = new Cell(toCopyArray[x, y]);
-            }
-        }
-
-
-        return localCellsArray;
     }
 }
