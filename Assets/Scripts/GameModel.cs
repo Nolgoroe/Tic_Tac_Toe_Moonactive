@@ -73,7 +73,7 @@ public class GameModel : MonoBehaviour
         //this will allow for more organised and managable code.
 
         currentIndexPlayerArray++;
-        if(currentIndexPlayerArray >= players.Length)
+        if (currentIndexPlayerArray >= players.Length)
         {
             currentIndexPlayerArray = 0;
         }
@@ -116,7 +116,7 @@ public class GameModel : MonoBehaviour
 
         foreach (Cell cell in _cellsArray)
         {
-            if(!cell.ReturnIsMarked())
+            if (!cell.ReturnIsMarked())
             {
                 return false;
             }
@@ -145,7 +145,6 @@ public class GameModel : MonoBehaviour
 
                     if (currentScore == gameModeSO.modelRequiredComboToWin)
                     {
-                        Debug.Log("Win in row");
                         return true;
                     }
                 }
@@ -175,7 +174,6 @@ public class GameModel : MonoBehaviour
 
                     if (currentScore == gameModeSO.modelRequiredComboToWin)
                     {
-                        Debug.Log("Win in Col");
                         return true;
                     }
                 }
@@ -205,7 +203,6 @@ public class GameModel : MonoBehaviour
 
                 if (currentScore == gameModeSO.modelRequiredComboToWin)
                 {
-                    Debug.Log("Win diag 1");
                     return true;
                 }
             }
@@ -235,7 +232,6 @@ public class GameModel : MonoBehaviour
 
                 if (currentScore == gameModeSO.modelRequiredComboToWin)
                 {
-                    Debug.Log("Win diag 2");
                     return true;
                 }
             }
@@ -332,95 +328,105 @@ public class GameModel : MonoBehaviour
     public Cell CallMiniMaxAlgo()
     {
         //this will return a cell to the AI
+        int bestScore = int.MinValue;
+        Cell chosenCell = null;
 
         int currentPlayerID = (int)currentPlayer.publicPlyerData.playerIconIndex;
 
-        int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
-        Cell[,] localCellsArray = new Cell[boardWidth, boardHeight];
-
-        int bestMove = int.MinValue; ; // Start with the worst possible score
-        Cell cellChosen = null;
-
-
-        for (int i = 0; i < allEmptyGameCells.Count; i++)
+        for (int i = 0; i < 3; i++)
         {
-            localCellsArray = HardCopyCellArray(cellsArray); //current state of board 
-            Cell cellToMark = allEmptyGameCells[i];
-
-            // Assuming currentPlayerID is the AI's player ID here
-            int score = minimax(currentPlayerID, cellToMark.ReturnCellCoordinatesInBoard(), localCellsArray, 9, int.MaxValue, int.MinValue);
-            if (score > bestMove) // Look for a move that maximizes the score
+            for (int j = 0; j < 3; j++)
             {
-                bestMove = score;
-                cellChosen = cellToMark;
+                if (!cellsArray[i, j].ReturnIsMarked())
+                {
+                    cellsArray[i, j].MarkCell(currentPlayer);
+                    int score = minimax(cellsArray, 9, false, currentPlayerID);
+                    cellsArray[i, j].UnMarkCell();
+
+
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
+                        chosenCell = cellsArray[i, j];
+                    }
+                }
             }
         }
 
-
-        return cellChosen;
+        return chosenCell;
 
     }
 
-    public int minimax(int playerID, Vector2Int cellToMarkPos, Cell[,] localCellsArray, int depth, int alpha, int beta)
+    public int minimax(Cell[,] cellsArray, int depth, bool isMaximizing, int playerID)
     {
-        localCellsArray[cellToMarkPos.x, cellToMarkPos.y].ManualMark(playerID);
-
-        if (ReturnGeneralEndConditionMet(out EndConditions endCondition, localCellsArray, playerID) || depth == 0)
+        if (ReturnGeneralEndConditionMet(out EndConditions endCondition, cellsArray, playerID) || depth == 0)
         {
-            switch (endCondition)
-            {
-                case EndConditions.Win:
-                    if (playerID == (int)currentPlayer.publicPlyerData.playerIconIndex) return 1000 + depth;
-                    else return 2000;
-                case EndConditions.Draw:
-                    return 0;
-            }
-
-            // Reached maximum depth with no end condition met
-            return 0;
+            return ReturnAlgoScore(endCondition, playerID, depth);
         }
 
 
-        int score;
-        int currentPlayerID = (int)currentPlayer.publicPlyerData.playerIconIndex;
-        bool isMaximizingPlayer = currentPlayerID == playerID;
-
-        List<Cell> localEmptyCellsList = ReturnEmptyCellListFromArray(localCellsArray);
-
-        if (isMaximizingPlayer)
+        if (isMaximizing)
         {
-            int maxEval = int.MinValue;
+            int bestScore = int.MinValue;
 
-            foreach (var cell in localEmptyCellsList)
+            for (int i = 0; i < 3; i++)
             {
-                Cell[,] recursiveCellArray = HardCopyCellArray(localCellsArray);
-                score = minimax(ReturnNextPlayerID(playerID), cell.ReturnCellCoordinatesInBoard(), recursiveCellArray, depth - 1, alpha, beta);
-                maxEval = Math.Max(maxEval, score);
-                alpha = Math.Max(alpha, score);
-                if (beta <= alpha)
+                for (int j = 0; j < 3; j++)
                 {
-                    break; // Beta cut-off
+                    if (!cellsArray[i, j].ReturnIsMarked())
+                    {
+                        cellsArray[i, j].MarkCell(currentPlayer);
+                        int score = minimax(cellsArray, depth - 1, false, ReturnNextPlayerID(playerID));
+                        cellsArray[i, j].UnMarkCell();
+
+                        bestScore = Mathf.Max(score, bestScore);
+
+                    }
                 }
             }
-            return maxEval;
+
+            return bestScore;
         }
         else
         {
-            int minEval = int.MaxValue;
-            foreach (var cell in localEmptyCellsList)
+            int bestScore = int.MaxValue;
+
+            for (int i = 0; i < 3; i++)
             {
-                Cell[,] recursiveCellArray = HardCopyCellArray(localCellsArray);
-                score = minimax(ReturnNextPlayerID(playerID), cell.ReturnCellCoordinatesInBoard(), recursiveCellArray, depth - 1, alpha, beta);
-                minEval = Math.Min(minEval, score);
-                beta = Math.Min(beta, score);
-                if (beta <= alpha)
+                for (int j = 0; j < 3; j++)
                 {
-                    break; // Alpha cut-off
+                    if (!cellsArray[i, j].ReturnIsMarked())
+                    {
+                        cellsArray[i, j].MarkCell(players[ReturnNextPlayerID(playerID)]);
+                        int score = minimax(cellsArray, depth - 1, true, ReturnNextPlayerID(playerID));
+                        cellsArray[i, j].UnMarkCell();
+
+                        bestScore = Mathf.Min(score, bestScore);
+                    }
                 }
             }
-            return minEval;
+
+            return bestScore;
         }
+    }
+
+    private int ReturnAlgoScore(EndConditions condition, int playerID, int depth)
+    {
+        switch (condition)
+        {
+            case EndConditions.Win:
+                if (playerID == (int)currentPlayer.publicPlyerData.playerIconIndex) return 10 - depth;
+                else
+                {
+                    return -10 + depth;
+                }
+            case EndConditions.Draw:
+                return 0;
+            default:
+                break;
+        }
+
+        return -2;
     }
     private List<Cell> ReturnEmptyCellListFromArray(Cell[,] cellArray)
     {
@@ -428,7 +434,7 @@ public class GameModel : MonoBehaviour
 
         foreach (Cell cell in cellArray)
         {
-            if(!cell.ReturnIsMarked())
+            if (!cell.ReturnIsMarked())
             {
                 localCellList.Add(cell);
             }
@@ -450,7 +456,7 @@ public class GameModel : MonoBehaviour
         return playerID;
     }
 
-    private Cell[,] HardCopyCellArray(Cell[,] toCopyArray)
+    private Cell[,] HardCopyCellArray(Cell[,] toCopyArray) //temp??
     {
         int width = toCopyArray.GetLength(0);
         int height = toCopyArray.GetLength(1);
@@ -461,7 +467,7 @@ public class GameModel : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                localCellsArray[x, y] = new Cell(toCopyArray[x,y]);
+                localCellsArray[x, y] = new Cell(toCopyArray[x, y]);
             }
         }
 

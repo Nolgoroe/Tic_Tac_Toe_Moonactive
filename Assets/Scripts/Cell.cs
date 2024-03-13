@@ -52,12 +52,6 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         SetIsMarked(true);
         SetMarkingPlayerIndex((int)currentPlayerData.playerIconIndex);
     }
-    public void ManualMark(int _playerIndex)
-    {
-        //used for AI Mini Max Algo
-        MarkedIconIndex = _playerIndex;
-        isMarked = true;
-    }
     public void AnimateMark()
     {
         cellImage.transform.localScale = Vector3.zero;
