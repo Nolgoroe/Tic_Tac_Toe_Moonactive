@@ -22,7 +22,7 @@ public class GameModel : MonoBehaviour
     [Header("Game Board Data")]
     [SerializeField] Cell cellPrefab;
     [SerializeField] Transform cellsParent;
-    [SerializeField] List<Cell> allGameCells;
+    [SerializeField] List<Cell> allEmptyGameCells;
     private Cell[,] cellsArray;
 
     [Header("End conditions data")]
@@ -54,6 +54,8 @@ public class GameModel : MonoBehaviour
         {
             currentPlayer.TurnEnd(); //temp?? is this here?
         }
+
+        allEmptyGameCells.Remove(cell);
     }
     public void CellRemoveMarkOnBoard(Cell cell)
     {
@@ -62,6 +64,8 @@ public class GameModel : MonoBehaviour
         cell.UnMarkCell();
 
         currentFilledCells--;
+
+        allEmptyGameCells.Add(cell);
     }
 
     public void MoveToNextPlayer()
@@ -91,7 +95,7 @@ public class GameModel : MonoBehaviour
     {
         endCondition = EndConditions.None;
 
-        if (ReturnWinRow() || ReturnWinDiagonalLeftBotRightUp() || ReturnWinDiagonalRightBotLeftUp() || ReturnWinColumn())
+        if (ReturnWinRow(cellsArray) || ReturnWinDiagonalLeftBotRightUp(cellsArray) || ReturnWinDiagonalRightBotLeftUp(cellsArray) || ReturnWinColumn(cellsArray))
         {
             endCondition = EndConditions.Win;
             return true;
@@ -111,7 +115,7 @@ public class GameModel : MonoBehaviour
         return currentFilledCells == maxNumberOfCells;
     }
 
-    private bool ReturnWinRow()
+    private bool ReturnWinRow(Cell[,] _cellsArray)
     {
         // 0,0 is top Left.
 
@@ -127,7 +131,7 @@ public class GameModel : MonoBehaviour
 
             for (int column = 0; column < boardWidth; column++)
             {
-                if (cellsArray[column, row].ReturnMarkedIconIndex() == currentPlayerIconIndex)
+                if (_cellsArray[column, row].ReturnMarkedIconIndex() == currentPlayerIconIndex)
                 {
                     currentScore++;
 
@@ -143,7 +147,7 @@ public class GameModel : MonoBehaviour
         return false;
     }
 
-    private bool ReturnWinColumn()
+    private bool ReturnWinColumn(Cell[,] _cellsArray)
     {
         // 0,0 is top Left.
         int currentScore = 0;
@@ -158,7 +162,7 @@ public class GameModel : MonoBehaviour
 
             for (int row = 0; row < boardHeight; row++)
             {
-                if (cellsArray[column, row].ReturnMarkedIconIndex() == currentPlayerIconIndex)
+                if (_cellsArray[column, row].ReturnMarkedIconIndex() == currentPlayerIconIndex)
                 {
                     currentScore++;
 
@@ -173,7 +177,7 @@ public class GameModel : MonoBehaviour
 
         return false;
     }
-    private bool ReturnWinDiagonalLeftBotRightUp()
+    private bool ReturnWinDiagonalLeftBotRightUp(Cell[,] _cellsArray)
     {
         // 0,2 is bottom Left.
 
@@ -189,7 +193,7 @@ public class GameModel : MonoBehaviour
         {
             rowOffset--;
 
-            if (cellsArray[column, rowOffset].ReturnMarkedIconIndex() == currentPlayerIconIndex)
+            if (_cellsArray[column, rowOffset].ReturnMarkedIconIndex() == currentPlayerIconIndex)
             {
                 currentScore++;
 
@@ -203,7 +207,7 @@ public class GameModel : MonoBehaviour
         }
         return false;
     }
-    private bool ReturnWinDiagonalRightBotLeftUp()
+    private bool ReturnWinDiagonalRightBotLeftUp(Cell[,] _cellsArray)
     {
         // 2,2 is bottom Left.
 
@@ -220,7 +224,7 @@ public class GameModel : MonoBehaviour
         {
             rowOffset--;
 
-            if (cellsArray[column, rowOffset].ReturnMarkedIconIndex() == currentPlayerIconIndex)
+            if (_cellsArray[column, rowOffset].ReturnMarkedIconIndex() == currentPlayerIconIndex)
             {
                 currentScore++;
 
@@ -249,7 +253,7 @@ public class GameModel : MonoBehaviour
 
         Cell foundCell = null;
         List<Cell> localcells = new List<Cell>();
-        localcells.AddRange(allGameCells);
+        localcells.AddRange(allEmptyGameCells);
 
         do
         {
@@ -270,7 +274,7 @@ public class GameModel : MonoBehaviour
 
 
         return foundCell;
-    }
+    } // this might need to go away - temp - AI moved to MiniMax
 
     public GameModeSO ReturnCurrentGameModeSO()
     {
@@ -284,8 +288,6 @@ public class GameModel : MonoBehaviour
     #endregion
 
     #region Private Actions
-
-
     private void SpawnGridCells()
     {
         int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
@@ -302,7 +304,7 @@ public class GameModel : MonoBehaviour
                 Cell cell = Instantiate(cellPrefab, cellsParent);
                 cell.InitCell(x, y);
                 cellsArray[x, y] = cell;
-                allGameCells.Add(cell);
+                allEmptyGameCells.Add(cell);
 
                 gameController.ConnectCellToEvents(cell);
             }
@@ -313,4 +315,24 @@ public class GameModel : MonoBehaviour
         currentIndexPlayerArray = System.Array.IndexOf(players, currentPlayer);
     }
     #endregion
+
+
+
+
+    ////Temp zone
+    //[ContextMenu("Test")]
+    //public void Test()
+    //{
+    //    minimax(allEmptyGameCells);
+    //}
+
+    //public int minimax(List<Cell> boardCellState)
+    //{
+    //    int currentPlayerID = (int)currentPlayer.publicPlyerData.playerIconIndex;
+    //    Cell[,] localCellsArray = 
+    //    foreach (Cell cellMove in boardCellState)
+    //    {
+
+    //    }
+    //}
 }

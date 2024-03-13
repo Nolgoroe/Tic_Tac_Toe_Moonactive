@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement; //temp
 
@@ -17,6 +16,10 @@ public class GameController : MonoBehaviour
 
     [Header("Turn Timer Data")]
     [SerializeField] float currentTimerTime = 0; //is it ok for the timer to be on the controller? temp??
+
+    [Header("AI Player TEMP")]
+    [SerializeField] AILevel aiLevel;
+
 
     private void Awake()
     {
@@ -190,4 +193,16 @@ public class GameController : MonoBehaviour
         cell.SetAsHint();
     }
     #endregion
+
+
+
+
+
+
+
+
+
+
+
+    
 }
