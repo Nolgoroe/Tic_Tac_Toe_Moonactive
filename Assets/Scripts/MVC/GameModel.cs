@@ -21,6 +21,10 @@ public class GameModel : MonoBehaviour
     private PlayerBase[] players;
     private PlayerBase currentPlayer;
 
+    [Header("AI data")]
+    [SerializeField] int chosenDepthForAlgo = -1;
+    [SerializeField] int[] difficultyDepthValue;
+
     [Header("Game Board Data")]
     [SerializeField] Cell cellPrefab;
     [SerializeField] Transform cellsParent;
@@ -32,7 +36,10 @@ public class GameModel : MonoBehaviour
     ////[SerializeField] int currentFilledCells;
 
 
-
+    private void Start()
+    {
+        chosenDepthForAlgo = difficultyDepthValue[0];
+    }
 
     #region Public Actions
     public void InitGameModel(GameModeSO _gameModeSO, PlayerBase[] _players, GameController _gameController)
@@ -79,6 +86,19 @@ public class GameModel : MonoBehaviour
         }
 
         currentPlayer = players[currentIndexPlayerArray];
+    }
+
+    public void SetAILevel(AILevel _chosenAILevel)
+    {
+        //called through controller after view adds events to buttons
+        if(System.Enum.GetValues(typeof(AILevel)).Length != difficultyDepthValue.Length)
+        {
+            Debug.LogError("Arrays of enum and difficulty values must match in length!");
+            return;
+        }
+
+        chosenDepthForAlgo = difficultyDepthValue[(int)_chosenAILevel];
+
     }
 
     #endregion
@@ -241,7 +261,7 @@ public class GameModel : MonoBehaviour
     }
     #endregion
 
-    #region Return Data
+    #region Public Return Data
     public PlayerBase ReturnCurrentPlayer()
     {
         return currentPlayer;
@@ -320,12 +340,8 @@ public class GameModel : MonoBehaviour
     }
     #endregion
 
-
-
-
-    //Temp zone
-    [ContextMenu("Test")]
-    public Cell CallMiniMaxAlgo(AILevel aiLevel)
+    #region Mini Max AI Algo
+    public Cell CallMiniMaxAlgo()
     {
         //this will return a cell to the AI
         int bestScore = int.MinValue;
@@ -338,7 +354,7 @@ public class GameModel : MonoBehaviour
             if (!cell.ReturnIsMarked())
             {
                 cell.MarkCell(currentPlayer);
-                int score = minimax(cellsArray, (int)aiLevel, false, currentPlayerID, int.MinValue, int.MaxValue);
+                int score = minimax(cellsArray, chosenDepthForAlgo, false, currentPlayerID, int.MinValue, int.MaxValue);
                 cell.UnMarkCell();
 
 
@@ -355,7 +371,7 @@ public class GameModel : MonoBehaviour
 
     }
 
-    public int minimax(Cell[,] cellsArray, int depth, bool isMaximizing, int playerID, int alpha, int beta)
+    private int minimax(Cell[,] cellsArray, int depth, bool isMaximizing, int playerID, int alpha, int beta)
     {
         if (ReturnGeneralEndConditionMet(out EndConditions endCondition, cellsArray, playerID) || depth == 0)
         {
@@ -450,4 +466,5 @@ public class GameModel : MonoBehaviour
 
         return playerID;
     }
+    #endregion
 }

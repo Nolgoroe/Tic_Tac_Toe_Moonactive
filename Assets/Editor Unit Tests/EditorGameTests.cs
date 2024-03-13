@@ -19,7 +19,7 @@ public class EditorGameTests
     int currentPlayerIndex = 1;/// 1 is human, 2 is AI
 
     #region player win
-    [Test, Category("Winnig")]
+    [Test, Category("Winning")]
     public void WinRows()
     {
         GameModel model = new GameModel();
@@ -36,7 +36,7 @@ public class EditorGameTests
         Assert.AreEqual(true, returnWinRows(board));
     }
 
-    [Test, Category("Winnig")]
+    [Test, Category("Winning")]
     public void WinColumns()
     {
         int[,] board = new int[,]
@@ -51,7 +51,7 @@ public class EditorGameTests
         Assert.AreEqual(true, ReturnWinColumns(board));
     }
 
-    [Test, Category("Winnig")]
+    [Test, Category("Winning")]
     public void WinDiagonalLeftBotRightUp()
     {
         int[,] board = new int[,]
@@ -66,7 +66,7 @@ public class EditorGameTests
         Assert.AreEqual(true, ReturnWinDiagonalLeftBotRightUp(board));
     }
 
-    [Test, Category("Winnig")]
+    [Test, Category("Winning")]
     public void WinDiagonalRightBotLeftUp()
     {
 

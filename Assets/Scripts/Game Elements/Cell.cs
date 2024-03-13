@@ -9,6 +9,9 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 {
     const int EMPTY_CELL_INDEX = -1; //-1 indicates "empty" cell
 
+    public Action<Cell> OnClickOnCell;
+    public Action<Cell> OnRemoveCell;
+
     [Header("References")]
     [SerializeField] Image cellImage;
     [SerializeField] ParticleSystem hintParticle;
@@ -21,8 +24,6 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     [Header("Animation")]
     [SerializeField] float scaleUpSpeed; 
 
-    public Action<Cell> OnClickOnCell;
-    public Action<Cell> OnRemoveCell; 
 
     public void InitCell(int x, int y)
     {

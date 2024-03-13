@@ -8,11 +8,19 @@ using TMPro;
 
 public class GameView : MonoBehaviour
 {
+    #region hidden data
+    [HideInInspector]
+    [SerializeField] GameController gameController;
+    #endregion
 
     [Header("Main Menu")]
     [SerializeField] RectTransform mainMenuScreen;
     [SerializeField] RectTransform mainMenuParentObject;
     [SerializeField] float mainMenuTweenSpeed;
+
+    [Header("AI Difficulties")]
+    [SerializeField] Button[] difficultyButtons;
+
     [Header("Undo System")]
     [SerializeField] RectTransform pvcButtonsParent;
 
@@ -44,12 +52,18 @@ public class GameView : MonoBehaviour
     private void Start()
     {
         SoundManager.Instance.PlaySoundFade(Sounds.MenuMusic);
+
+        SetDifficultyButtonsCallbacks();
     }
 
 
 
     #region Public Actions
-    public void InitGameView()
+    public void InitGameView(GameController _gameController)
+    {
+        gameController = _gameController;
+    }
+    public void GameViewStartup()
     {
         LeanTween.moveX(mainMenuParentObject, Screen.width, mainMenuTweenSpeed).setEaseInCirc().
             setOnComplete(() => ToggleScreen(false, mainMenuScreen));
@@ -113,6 +127,21 @@ public class GameView : MonoBehaviour
     public void UpdateTurnTimer(float time)
     {
         timerText.text = "Time: " + Mathf.Ceil(time).ToString();
+    }
+
+    #endregion
+
+
+    #region Button Related
+    public void SetDifficultyButtonsCallbacks()
+    {
+        //connected To Buttons
+        for (int i = 0; i < System.Enum.GetValues(typeof(AILevel)).Length; i++)
+        {
+            int index = i;
+
+            difficultyButtons[index].onClick.AddListener(() => gameController.SetAILevel((AILevel)index));
+        }
     }
 
     #endregion

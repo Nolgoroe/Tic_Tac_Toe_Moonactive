@@ -18,12 +18,12 @@ MonoBehaviour:
   timeForTurn: 5
   allowUndo: 1
   modePlayers:
-  - playerName: Avi
+  - playerName: Human
     playerType: 0
     isOnline: 0
     playerIconIndex: 0
     playerIconSprite: {fileID: 0}
-  - playerName: AI29998
+  - playerName: AI5000
     playerType: 1
     isOnline: 0
     playerIconIndex: 0

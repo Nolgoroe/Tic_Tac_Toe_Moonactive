@@ -19,8 +19,6 @@ public class HumanPlayer : PlayerBase
 
     public override void TurnEnd()
     {
-        //if (GameController.Instance.CheckEndConditions()) return;
-
         OnEndTurn?.Invoke();
     }
 }

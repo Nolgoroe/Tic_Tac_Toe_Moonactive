@@ -5,16 +5,13 @@ using UnityEngine.EventSystems;
 
 public class AnimateOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] string parameterName;
-
+    [SerializeField] private string parameterName;
     private Animator anim;
+
     void Start()
     {
-        TryGetComponent<Animator>(out anim);
-        if(!anim)
-        {
+        if(!TryGetComponent<Animator>(out anim))
             Debug.LogError("Can't find animator on object");
-        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)

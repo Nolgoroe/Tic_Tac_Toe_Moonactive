@@ -15,15 +15,10 @@ public class AIPlayer : PlayerBase
 
 
         //Choose random empty cell
-        Cell localCell = GameController.Instance.ReturnAIChoice(AILevel.Easy);
+        Cell localCell = GameController.Instance.ReturnAIChoice();
 
         //Populate that cell
         localCell.ActivateOnClickOnCellAction();
-
-
-        //Check win condition in the controller
-        //if (GameController.Instance.CheckEndConditions()) yield break;
-
 
         //Move to next turn
         TurnEnd();

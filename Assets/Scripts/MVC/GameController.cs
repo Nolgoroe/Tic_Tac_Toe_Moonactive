@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement; //temp
 
 public class GameController : MonoBehaviour
 {
-    public static GameController Instance; //is this temp???
+    public static GameController Instance; 
     public static bool isGameOver = false;
 
     [Header("Required References")]
@@ -15,10 +15,7 @@ public class GameController : MonoBehaviour
     [SerializeField] UndoSystem undoSystem;
 
     [Header("Turn Timer Data")]
-    [SerializeField] float currentTimerTime = 0; //is it ok for the timer to be on the controller? temp??
-
-    [Header("AI Player TEMP")]
-    [SerializeField] AILevel aiLevel;
+    [SerializeField] float currentTimerTime = 0; 
 
 
     private void Awake()
@@ -31,6 +28,11 @@ public class GameController : MonoBehaviour
         {
             Instance = this;
         }
+    }
+
+    private void Start()
+    {
+        gameViewRef.InitGameView(this);
     }
 
     private void Update()
@@ -61,10 +63,10 @@ public class GameController : MonoBehaviour
 
         yield return null;
         //Init game Model
-        InitGameModel(gameModeSO); //is it ok we pass the game mode through to here?
+        GameModelStartup(gameModeSO); //is it ok we pass the game mode through to here?
 
         //init game view
-        InitGameView();
+        ViewStartup();
 
         //allow undo only if the gamemodeSO allows it.
         if(!gameModelRef.ReturnCurrentGameModeSO().modelAllowUndo)
@@ -77,7 +79,7 @@ public class GameController : MonoBehaviour
         StartCoroutine(gameModelRef.ReturnCurrentPlayer().TurnStart());
     }
 
-    private void InitGameModel(GameModeSO chosenGameMode)
+    private void GameModelStartup(GameModeSO chosenGameMode)
     {
         //Create the game mode players in the factory by the player types in the gamemodeSO
         //This will just return the relavent classes of our players
@@ -89,9 +91,9 @@ public class GameController : MonoBehaviour
         ConnectPlayersToEvents(players);
     }
 
-    private void InitGameView()
+    private void ViewStartup()
     {
-        gameViewRef.InitGameView();
+        gameViewRef.GameViewStartup();
         gameViewRef.UpdatePlayerView(gameModelRef.ReturnCurrentPlayer()); //temp
     }
     #endregion
@@ -145,10 +147,7 @@ public class GameController : MonoBehaviour
         if (gameModelRef.ReturnGeneralEndConditionMet(out EndConditions endCondition, boardCell, currentPlayerID))
         {
             SetGameOver(endCondition);
-            //return true;
         }
-
-        //return false;
     }
     public void ConnectCellToEvents(Cell cell)
     {
@@ -166,10 +165,10 @@ public class GameController : MonoBehaviour
         //Used by AI to find cell to mark
         return gameModelRef.ReturnRandomCellInArray();
     }
-    public Cell ReturnAIChoice(AILevel aiLevel)
+    public Cell ReturnAIChoice()
     {
         //Used by AI to find cell to mark
-        return gameModelRef.CallMiniMaxAlgo(aiLevel);
+        return gameModelRef.CallMiniMaxAlgo();
     }
     public bool ReturnCurrentPlayerIsHuman()
     {
@@ -177,7 +176,7 @@ public class GameController : MonoBehaviour
     }
     #endregion
 
-    #region Connected To Buttons
+    #region Related To Buttons
     public void SetChosenGameMode(GameModeSO gameModeSO)
     {        
         // called from button
@@ -200,6 +199,11 @@ public class GameController : MonoBehaviour
 
         Cell cell = ReturnRandomCell();
         cell.SetAsHint();
+    }
+    public void SetAILevel(AILevel aiLevel)
+    {
+        //connected through view to buttons
+        gameModelRef.SetAILevel(aiLevel);
     }
     #endregion
 

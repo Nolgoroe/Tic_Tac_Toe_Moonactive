@@ -19,9 +19,10 @@ public struct PlayerData
 }
 public abstract class PlayerBase
 {
-    [SerializeField] PlayerData playerData;
-
     public Action OnEndTurn;
+
+    [SerializeField] private PlayerData playerData;
+
     
     public PlayerBase(string _playerName, Sprite _playerIconSprite, PlayerTypes _playerType, PlayerIcons _playerIcon)
     {
