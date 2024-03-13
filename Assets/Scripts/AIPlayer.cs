@@ -15,19 +15,14 @@ public class AIPlayer : PlayerBase
 
 
         //Choose random empty cell
-        Cell localCell = GameController.Instance.ReturnRandomCell();
-        if(localCell == null)
-        {
-            Debug.Log("Error finding cell to change.");
-            yield break;
-        }
+        Cell localCell = GameController.Instance.ReturnAIChoice();
 
         //Populate that cell
         localCell.ActivateOnClickOnCellAction();
 
 
         //Check win condition in the controller
-        if (GameController.Instance.CheckEndConditions()) yield break;
+        //if (GameController.Instance.CheckEndConditions()) yield break;
 
 
         //Move to next turn
@@ -36,7 +31,6 @@ public class AIPlayer : PlayerBase
 
     public override void TurnEnd()
     {
-        Debug.Log("AI ended turn");
         OnEndTurn?.Invoke();
     }
 }

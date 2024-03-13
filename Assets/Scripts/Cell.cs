@@ -16,7 +16,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     [Header("Gameplay")]
     [SerializeField] bool isMarked;
     [SerializeField] int MarkedIconIndex = EMPTY_CELL_INDEX; // this is set by the player enum - later used for checks. starts at -1 to indicate empty.
-    [SerializeField] Vector2 cellCoordinates = Vector2.zero;
+    [SerializeField] Vector2Int cellCoordinates = new Vector2Int(-1,-1);
 
     [Header("Animation")]
     [SerializeField] float scaleUpSpeed; 
@@ -26,7 +26,20 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
     public void InitCell(int x, int y)
     {
-        cellCoordinates = new Vector2(x, y);
+        cellCoordinates = new Vector2Int(x, y);
+    }
+
+    //default constructor
+    public Cell()
+    {
+
+    }
+    //copy constructor
+    public Cell(Cell cellToCopy)
+    {
+        isMarked = cellToCopy.isMarked;
+        MarkedIconIndex = cellToCopy.MarkedIconIndex;
+        cellCoordinates = cellToCopy.cellCoordinates;
     }
 
     #region Marking and Unmarking
@@ -39,7 +52,12 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         SetIsMarked(true);
         SetMarkingPlayerIndex((int)currentPlayerData.playerIconIndex);
     }
-
+    public void ManualMark(int _playerIndex)
+    {
+        //used for AI Mini Max Algo
+        MarkedIconIndex = _playerIndex;
+        isMarked = true;
+    }
     public void AnimateMark()
     {
         cellImage.transform.localScale = Vector3.zero;
@@ -85,8 +103,6 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
         if (GameController.isGameOver) return; //temp???
 
-        Debug.Log("Detect Click");
-
         OnClickOnCell?.Invoke(this);
     }
 
@@ -101,6 +117,10 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     public int ReturnMarkedIconIndex()
     {
         return MarkedIconIndex;
+    }
+    public Vector2Int ReturnCellCoordinatesInBoard()
+    {
+        return cellCoordinates;
     }
     #endregion
 

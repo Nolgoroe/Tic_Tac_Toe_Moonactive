@@ -103,6 +103,7 @@ public class GameController : MonoBehaviour
 
         foreach (PlayerBase player in players)
         {
+            player.OnEndTurn += CheckEndConditions;
             player.OnEndTurn += gameModelRef.MoveToNextPlayer;
             player.OnEndTurn += StartNextPlayerTurn;
         }
@@ -134,17 +135,20 @@ public class GameController : MonoBehaviour
     #endregion
 
     #region Public Actions
-    public bool CheckEndConditions()
+    public void CheckEndConditions()
     {
         //called from both the AI and Human players after they mark a cell.
 
-        if (gameModelRef.ReturnGeneralEndConditionMet(out EndConditions endCondition))
+        int currentPlayerID = (int)gameModelRef.ReturnCurrentPlayer().publicPlyerData.playerIconIndex;
+        Cell[,] boardCell = gameModelRef.ReturnBoardCellsArray();
+
+        if (gameModelRef.ReturnGeneralEndConditionMet(out EndConditions endCondition, boardCell, currentPlayerID))
         {
             SetGameOver(endCondition);
-            return true;
+            //return true;
         }
 
-        return false;
+        //return false;
     }
     public void ConnectCellToEvents(Cell cell)
     {
@@ -161,6 +165,11 @@ public class GameController : MonoBehaviour
     {
         //Used by AI to find cell to mark
         return gameModelRef.ReturnRandomCellInArray();
+    }
+    public Cell ReturnAIChoice()
+    {
+        //Used by AI to find cell to mark
+        return gameModelRef.CallMiniMaxAlgo();
     }
     public bool ReturnCurrentPlayerIsHuman()
     {
