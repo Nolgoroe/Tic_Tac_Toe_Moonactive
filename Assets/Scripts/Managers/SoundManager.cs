@@ -25,6 +25,8 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance;
 
     [SerializeField] List<AudioSourceCombo> allAudioSources;
+    [Range(0f, 1f)]
+    [SerializeField] float soundModifier;
     private Dictionary<Sounds, AudioSourceCombo> SoundToAudioSourceDict;
 
     private void Awake()
@@ -60,7 +62,7 @@ public class SoundManager : MonoBehaviour
 
         SoundToAudioSourceDict[sound].source.Play();
 
-        LeanTween.value(SoundToAudioSourceDict[sound].source.gameObject, 0, SoundToAudioSourceDict[sound].maxVolume, SoundToAudioSourceDict[sound].timeToFadeVolume).setOnUpdate((float val) =>
+        LeanTween.value(SoundToAudioSourceDict[sound].source.gameObject, 0, SoundToAudioSourceDict[sound].maxVolume * soundModifier, SoundToAudioSourceDict[sound].timeToFadeVolume).setOnUpdate((float val) =>
         {
             SoundToAudioSourceDict[sound].source.volume = val;
         });
@@ -68,16 +70,17 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySoundOneShot(Sounds sound)
     {
-        SoundToAudioSourceDict[sound].source.PlayOneShot(SoundToAudioSourceDict[sound].source.clip, SoundToAudioSourceDict[sound].maxVolume);
+        SoundToAudioSourceDict[sound].source.PlayOneShot(SoundToAudioSourceDict[sound].source.clip, SoundToAudioSourceDict[sound].maxVolume * soundModifier);
     }
     public void PlaySoundNormal(Sounds sound)
     {
+        SoundToAudioSourceDict[sound].source.volume = soundModifier;
         SoundToAudioSourceDict[sound].source.Play();
     }
 
     public void StopSoundFade(Sounds sound)
     {
-        LeanTween.value(SoundToAudioSourceDict[sound].source.gameObject, SoundToAudioSourceDict[sound].source.volume, 0, SoundToAudioSourceDict[sound].timeToFadeVolume).setOnUpdate((float val) =>
+        LeanTween.value(SoundToAudioSourceDict[sound].source.gameObject, SoundToAudioSourceDict[sound].source.volume * soundModifier, 0, SoundToAudioSourceDict[sound].timeToFadeVolume).setOnUpdate((float val) =>
         {
             SoundToAudioSourceDict[sound].source.volume = val;
         });
@@ -86,5 +89,15 @@ public class SoundManager : MonoBehaviour
     {
         if (SoundToAudioSourceDict[sound].source.isPlaying)
             SoundToAudioSourceDict[sound].source.Stop();
+    }
+
+    public void OnChangeSoundModifier(float value)
+    {
+        soundModifier = value;
+
+        foreach (AudioSourceCombo combo in allAudioSources)
+        {
+            combo.source.volume = combo.maxVolume * soundModifier;
+        }
     }
 }

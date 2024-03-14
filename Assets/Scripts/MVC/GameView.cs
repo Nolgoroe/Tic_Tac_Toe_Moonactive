@@ -34,11 +34,14 @@ public class GameView : MonoBehaviour
     [SerializeField] TMP_Text currentPlayerName;
     [SerializeField] TMP_Text timerText;
 
+    [Header("Settings")]
+    [SerializeField] RectTransform settingsScreen;
+    [SerializeField] Slider volumeControlSlider;
+    [SerializeField] TMP_InputField turnTimeInput;
+    [SerializeField] TMP_Text systemMessages;
+
     private void Awake()
     {
-        ToggleScreen(true, mainMenuScreen);
-        ToggleScreen(false, endScreenCanvas);
-
         //I know this is generally frowned upon.. but it is called once on awake for the rest of the game.
         // the memory and CPU footprint of this is negligible in my opinion.
         Button[] allSceneButtons = FindObjectsOfType<Button>();
@@ -47,6 +50,9 @@ public class GameView : MonoBehaviour
             button.onClick.AddListener(() => SoundManager.Instance.PlaySoundOneShot(Sounds.ButtonClick));
         }
 
+        ToggleScreen(true, mainMenuScreen);
+        ToggleScreen(false, endScreenCanvas);
+        ToggleScreen(false, settingsScreen);
     }
 
     private void Start()
@@ -100,7 +106,7 @@ public class GameView : MonoBehaviour
 
         switch (endCondition)
         {
-            case EndConditions.Win:
+            case EndConditions.End:
                 text = player.publicPlyerData.playerName + " " + "Wins!";
                 SoundManager.Instance.PlaySoundOneShot(Sounds.Win);
                 break;
@@ -144,5 +150,41 @@ public class GameView : MonoBehaviour
         }
     }
 
+    public void OnChangeSoundModifier()
+    {
+        SoundManager.Instance.OnChangeSoundModifier(volumeControlSlider.value);
+    }
+    public void ToggleSettings()
+    {
+        if(settingsScreen.gameObject.activeInHierarchy)
+        {
+            settingsScreen.gameObject.SetActive(false);
+        }
+        else
+        {
+            settingsScreen.gameObject.SetActive(true);
+        }
+    }
+
+    public void SetControllerTimeForTurn()
+    {
+        if(int.TryParse(turnTimeInput.text, out int num) && num != 0)
+        {
+            gameController.SetTimeForTurn(num);
+        }
+        else
+        {
+            StartCoroutine(DisplaySettingsSystemMessage("Error in input field - must be a number larger than 0"));
+        }
+    }
+
     #endregion
+
+
+    private IEnumerator DisplaySettingsSystemMessage(string message)
+    {
+        systemMessages.text = message;
+        yield return new WaitForSeconds(3);
+        systemMessages.text = " ";
+    }
 }

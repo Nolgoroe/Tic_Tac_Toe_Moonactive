@@ -51,7 +51,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
         SetCellSprite(currentPlayerData.playerIconSprite);
         SetIsMarked(true);
-        SetMarkingPlayerIndex((int)currentPlayerData.playerIconIndex);
+        SetMarkingPlayerIndex((int)currentPlayerData.playerIcon);
     }
     public void AnimateMark()
     {
@@ -116,6 +116,10 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     public Vector2Int ReturnCellCoordinatesInBoard()
     {
         return cellCoordinates;
+    }
+    public int ReturnEmptyCellIndex()
+    {
+        return EMPTY_CELL_INDEX;
     }
     #endregion
 

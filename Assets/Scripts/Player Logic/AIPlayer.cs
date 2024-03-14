@@ -18,6 +18,7 @@ public class AIPlayer : PlayerBase
         Cell localCell = GameController.Instance.ReturnAIChoice();
 
         //Populate that cell
+        if (localCell)
         localCell.ActivateOnClickOnCellAction();
 
         //Move to next turn

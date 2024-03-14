@@ -15,7 +15,8 @@ public class GameController : MonoBehaviour
     [SerializeField] UndoSystem undoSystem;
 
     [Header("Turn Timer Data")]
-    [SerializeField] float currentTimerTime = 0; 
+    [SerializeField] float currentTimerTime = 0;
+    [SerializeField] float timeForTurn = 5;
 
 
     private void Awake()
@@ -56,7 +57,7 @@ public class GameController : MonoBehaviour
     {
         //Set default game data
         isGameOver = false;
-        currentTimerTime = gameModeSO.modeTimeForTurn;
+        currentTimerTime = timeForTurn;
 
         // do some view things here like animations and stuff to make the level start look cool, then after done - continue.
         // use yield return and then view functions.
@@ -113,9 +114,10 @@ public class GameController : MonoBehaviour
 
     private void StartNextPlayerTurn()
     {
-        currentTimerTime = gameModelRef.ReturnCurrentGameModeSO().modeTimeForTurn;
+        if (isGameOver) return;
+        currentTimerTime = timeForTurn;
 
-        gameViewRef.UpdatePlayerView(gameModelRef.ReturnCurrentPlayer()); //temp
+        gameViewRef.UpdatePlayerView(gameModelRef.ReturnCurrentPlayer());
         StartCoroutine(gameModelRef.ReturnCurrentPlayer().TurnStart());
     }
 
@@ -141,10 +143,10 @@ public class GameController : MonoBehaviour
     {
         //called from both the AI and Human players after they mark a cell.
 
-        int currentPlayerID = (int)gameModelRef.ReturnCurrentPlayer().publicPlyerData.playerIconIndex;
         Cell[,] boardCell = gameModelRef.ReturnBoardCellsArray();
 
-        if (gameModelRef.ReturnGeneralEndConditionMet(out EndConditions endCondition, boardCell, currentPlayerID))
+
+        if (gameModelRef.ReturnGeneralEndConditionMet(out EndConditions endCondition, boardCell, gameModelRef.ReturnCurrentPlayer(), out PlayerIcons winningPlayer))
         {
             SetGameOver(endCondition);
         }
@@ -204,6 +206,10 @@ public class GameController : MonoBehaviour
     {
         //connected through view to buttons
         gameModelRef.SetAILevel(aiLevel);
+    }
+    public void SetTimeForTurn(int value)
+    {
+        timeForTurn = value;
     }
     #endregion
 

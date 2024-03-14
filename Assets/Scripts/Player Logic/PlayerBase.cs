@@ -11,7 +11,7 @@ public struct PlayerData
     public bool isOnline;
 
     [HideInInspector]
-    public PlayerIcons playerIconIndex;
+    public PlayerIcons playerIcon;
 
     [HideInInspector]
     public Sprite playerIconSprite;
@@ -28,7 +28,7 @@ public abstract class PlayerBase
     {
         playerData.playerName = _playerName;
         playerData.playerType = _playerType;
-        playerData.playerIconIndex = _playerIcon;
+        playerData.playerIcon = _playerIcon;
         playerData.playerIconSprite = _playerIconSprite;
     }
 

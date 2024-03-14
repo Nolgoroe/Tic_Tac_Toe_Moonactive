@@ -16,7 +16,7 @@ public class EditorGameTests
 
     // A Test behaves as an ordinary method
 
-    int currentPlayerIndex = 1;/// 1 is human, 2 is AI
+    int currentPlayerIndex = 1;
 
     #region player win
     [Test, Category("Winning")]
@@ -31,7 +31,6 @@ public class EditorGameTests
             {0,0,0}
         };
 
-        currentPlayerIndex = 1;
 
         Assert.AreEqual(true, returnWinRows(board));
     }
@@ -46,7 +45,6 @@ public class EditorGameTests
             {1,0,0}
         };
 
-        currentPlayerIndex = 1;
 
         Assert.AreEqual(true, ReturnWinColumns(board));
     }
@@ -61,7 +59,6 @@ public class EditorGameTests
             {1,0,0}
         };
 
-        currentPlayerIndex = 1;
 
         Assert.AreEqual(true, ReturnWinDiagonalLeftBotRightUp(board));
     }
@@ -77,7 +74,6 @@ public class EditorGameTests
             {0,0,1}
         };
 
-        currentPlayerIndex = 1;
 
         Assert.AreEqual(true, ReturnWinDiagonalRightBotLeftUp(board));
     }
@@ -96,8 +92,7 @@ public class EditorGameTests
             {1,0,0}
         };
 
-        currentPlayerIndex = 2;
-        Assert.AreEqual(true, returnWinRows(board));
+        Assert.AreEqual(false, returnWinRows(board));
     }
 
     [Test, Category("Losing")]
@@ -110,8 +105,7 @@ public class EditorGameTests
             {0,0,2}
         };
 
-        currentPlayerIndex = 2;
-        Assert.AreEqual(true, ReturnWinColumns(board));
+        Assert.AreEqual(false, ReturnWinColumns(board));
     }
 
     [Test, Category("Losing")]
@@ -124,8 +118,7 @@ public class EditorGameTests
             {2,0,0}
         };
 
-        currentPlayerIndex = 2;
-        Assert.AreEqual(true, ReturnWinDiagonalLeftBotRightUp(board));
+        Assert.AreEqual(false, ReturnWinDiagonalLeftBotRightUp(board));
     }
 
     [Test, Category("Losing")]
@@ -139,14 +132,11 @@ public class EditorGameTests
             {0,1,2}
         };
 
-        currentPlayerIndex = 2;
-        Assert.AreEqual(true, ReturnWinDiagonalRightBotLeftUp(board));
+        Assert.AreEqual(false, ReturnWinDiagonalRightBotLeftUp(board));
     }
     #endregion
 
-
-
-
+    #region Draw
     [Test, Category("Draw")]
     public void Draw()
     {
@@ -159,10 +149,6 @@ public class EditorGameTests
         };
 
         ////check all other options of winning - then check if board is full - if it is, draw.
-
-        Assert.AreEqual(true, CheckDraw(board));
-
-        currentPlayerIndex = 2;
 
         Assert.AreEqual(true, CheckDraw(board));
     }
@@ -186,7 +172,9 @@ public class EditorGameTests
 
         return true;
     }
+    #endregion
 
+    #region Undo
     [Test, Category("Undo")]
     public void Undo()
     {
@@ -210,35 +198,39 @@ public class EditorGameTests
 
         Assert.AreEqual(expectedListCount, localDummyList.Count);
     }
+    #endregion
 
-
-
-
-
-
-
-
+    #region End Functions
     bool returnWinRows(int[,] board)
     {
-        int currentScore = 0;
-
         for (int row = 0; row < 3; row++)
         {
-            currentScore = 0;
+            int currentPlayerScore = 0;
+            int enemyPlayerScrore = 0;
 
             for (int column = 0; column < 3; column++)
             {
-                //this is used to look for a series of the same number.
-                // this is how we decide on which number to check - more useful in the draw and lose test cases.
-
                 if (board[row, column] == currentPlayerIndex)
                 {
-                    currentScore++;
+                    currentPlayerScore++;
+                    enemyPlayerScrore = 0;
 
-                    if (currentScore == 3)
+                    if (currentPlayerScore == 3)
                     {
-                        Debug.Log("Win in row");
                         return true;
+                    }
+                }
+                else
+                {
+                    if (board[row, column] != 0)
+                    {
+                        currentPlayerScore = 0;
+                        enemyPlayerScrore++;
+
+                        if (enemyPlayerScrore == 3)
+                        {
+                            return false;
+                        }
                     }
                 }
             }
@@ -248,22 +240,34 @@ public class EditorGameTests
     }
     bool ReturnWinColumns(int[,] board)
     {
-        int currentScore = 0;
-
         for (int column = 0; column < 3; column++)
         {
-            currentScore = 0;
+            int currentPlayerScore = 0;
+            int enemyPlayerScrore = 0;
 
             for (int row = 0; row < 3; row++)
             {
                 if (board[row, column] == currentPlayerIndex)
                 {
-                    currentScore++;
+                    currentPlayerScore++;
+                    enemyPlayerScrore = 0;
 
-                    if (currentScore == 3)
+                    if (currentPlayerScore == 3)
                     {
-                        Debug.Log("Win in coolumn");
                         return true;
+                    }
+                }
+                else
+                {
+                    if (board[row, column] != 0)
+                    {
+                        currentPlayerScore = 0;
+                        enemyPlayerScrore++;
+
+                        if (enemyPlayerScrore == 3)
+                        {
+                            return false;
+                        }
                     }
                 }
             }
@@ -273,7 +277,8 @@ public class EditorGameTests
     }
     bool ReturnWinDiagonalLeftBotRightUp(int[,] board)
     {
-        int currentScore = 0;
+        int currentPlayerScore = 0;
+        int enemyPlayerScrore = 0;
 
         int rowOffset = 3;
 
@@ -283,21 +288,35 @@ public class EditorGameTests
 
             if (board[rowOffset, column] == currentPlayerIndex)
             {
-                currentScore++;
-                if (currentScore == 3)
+                currentPlayerScore++;
+                enemyPlayerScrore = 0;
+
+                if (currentPlayerScore == 3)
                 {
-                    Debug.Log("Win in diag left bot right up");
                     return true;
                 }
             }
+            else
+            {
+                if (board[rowOffset, column] != 0)
+                {
+                    currentPlayerScore = 0;
+                    enemyPlayerScrore++;
 
+                    if (enemyPlayerScrore == 3)
+                    {
+                        return false;
+                    }
+                }
+            }
         }
 
         return false;
     }
     bool ReturnWinDiagonalRightBotLeftUp(int[,] board)
     {
-        int currentScore = 0;
+        int currentPlayerScore = 0;
+        int enemyPlayerScrore = 0;
 
         int columnOffset = 3;
         int rowOffset = 3;
@@ -308,17 +327,30 @@ public class EditorGameTests
 
             if (board[rowOffset, column] == currentPlayerIndex)
             {
-                currentScore++;
-                if (currentScore == 3)
+                currentPlayerScore++;
+                enemyPlayerScrore = 0;
+
+                if (currentPlayerScore == 3)
                 {
-                    Debug.Log("Win in diag right bot left up");
                     return true;
                 }
             }
+            else
+            {
+                if (board[rowOffset, column] != 0)
+                {
+                    currentPlayerScore = 0;
+                    enemyPlayerScrore++;
 
+                    if (enemyPlayerScrore == 3)
+                    {
+                        return false;
+                    }
+                }
+            }
         }
 
         return false;
     }
-
+    #endregion
 }
