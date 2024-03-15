@@ -1819,7 +1819,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameController: {fileID: 0}
-  gameModeSO: {fileID: 0}
+  chosenGameModeSO: {fileID: 0}
+  testGameMode: {fileID: 11400000, guid: 23951f5ad3133214192c6e8a8e71626e, type: 2}
   currentIndexPlayerArray: 0
   chosenDepthForAlgo: -1
   difficultyDepthValue: 020000000400000009000000

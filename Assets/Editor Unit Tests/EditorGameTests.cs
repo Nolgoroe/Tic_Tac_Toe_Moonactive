@@ -10,66 +10,95 @@ public class EditorGameTests
     /// AAA - ARRANGE, ACT, ASSERT
     /// </summary>
 
-    int currentPlayerIndex = 1;
+    public int currentPlayerIndex = 1;
 
     #region player win
     [Test, Category("Winning")]
     public void WinRows()
     {
-        GameModel model = new GameModel();
+        GameModel model = GameObject.FindObjectOfType<GameModel>();
+        model.UnitTestSetGameMode();
+        PlayerBase player = new HumanPlayer("test Player", null, PlayerTypes.Human, PlayerIcons.O);
 
         int[,] board = new int[,]
         {
-            {0,0,0},
-            {1,1,1},
-            {0,0,0}
+            {-1, -1, -1},
+            {1, 1, 1},
+            {-1, -1, -1}
         };
 
+        board = FlipArray(board); //we flip the array to make it the same as our game board - where 0,0 is the top left.
 
-        Assert.AreEqual(true, returnWinRows(board));
+        model.ReturnGeneralEndConditionMet(out EndConditions endCondition, board, player, out PlayerIcons winningPlayerIcon);
+
+        Assert.AreEqual(EndConditions.End, endCondition);
+        Assert.AreEqual(winningPlayerIcon, player.publicPlyerData.playerIcon);
     }
+
 
     [Test, Category("Winning")]
     public void WinColumns()
     {
+        GameModel model = GameObject.FindObjectOfType<GameModel>();
+        model.UnitTestSetGameMode();
+        PlayerBase player = new HumanPlayer("test Player", null, PlayerTypes.Human, PlayerIcons.O);
+
         int[,] board = new int[,]
         {
-            {1,0,0},
-            {1,0,0},
-            {1,0,0}
+            {1,-1,-1},
+            {1,-1,-1},
+            {1,-1,-1}
         };
+        board = FlipArray(board); //we flip the array to make it the same as our game board - where 0,0 is the top left.
 
 
-        Assert.AreEqual(true, ReturnWinColumns(board));
+        model.ReturnGeneralEndConditionMet(out EndConditions endCondition, board, player, out PlayerIcons winningPlayerIcon);
+
+        Assert.AreEqual(EndConditions.End, endCondition);
+        Assert.AreEqual(winningPlayerIcon, player.publicPlyerData.playerIcon);
     }
 
     [Test, Category("Winning")]
     public void WinDiagonalLeftBotRightUp()
     {
+        GameModel model = GameObject.FindObjectOfType<GameModel>();
+        model.UnitTestSetGameMode();
+        PlayerBase player = new HumanPlayer("test Player", null, PlayerTypes.Human, PlayerIcons.O);
+
         int[,] board = new int[,]
         {
-            {1,0,1},
-            {1,1,0},
-            {1,0,0}
+            {-1,-1,1},
+            {-1,1,-1},
+            {1,-1,-1}
         };
+        board = FlipArray(board); //we flip the array to make it the same as our game board - where 0,0 is the top left.
 
+        model.ReturnGeneralEndConditionMet(out EndConditions endCondition, board, player, out PlayerIcons winningPlayerIcon);
 
-        Assert.AreEqual(true, ReturnWinDiagonalLeftBotRightUp(board));
+        Assert.AreEqual(EndConditions.End, endCondition);
+        Assert.AreEqual(winningPlayerIcon, player.publicPlyerData.playerIcon);
     }
 
     [Test, Category("Winning")]
     public void WinDiagonalRightBotLeftUp()
     {
+        GameModel model = GameObject.FindObjectOfType<GameModel>();
+        model.UnitTestSetGameMode();
+        PlayerBase player = new HumanPlayer("test Player", null, PlayerTypes.Human, PlayerIcons.O);
 
         int[,] board = new int[,]
         {
-            {1,0,0},
-            {0,1,0},
-            {0,0,1}
+            {1,-1,-1},
+            {-1,1,-1},
+            {-1,-1,1}
         };
+        board = FlipArray(board); //we flip the array to make it the same as our game board - where 0,0 is the top left.
 
 
-        Assert.AreEqual(true, ReturnWinDiagonalRightBotLeftUp(board));
+        model.ReturnGeneralEndConditionMet(out EndConditions endCondition, board, player, out PlayerIcons winningPlayerIcon);
+
+        Assert.AreEqual(EndConditions.End, endCondition);
+        Assert.AreEqual(winningPlayerIcon, player.publicPlyerData.playerIcon);
     }
     #endregion
 
@@ -77,56 +106,89 @@ public class EditorGameTests
     [Test, Category("Losing")]
     public void LoseRows()
     {
-        GameModel model = new GameModel();
+        GameModel model = GameObject.FindObjectOfType<GameModel>();
+        model.UnitTestSetGameMode();
+        PlayerBase player = new HumanPlayer("test Player", null, PlayerTypes.Human, PlayerIcons.O);
 
         int[,] board = new int[,]
         {
-            {2,2,2},
-            {0,1,1},
-            {1,0,0}
+            {0,0,0},
+            {-1,1,1},
+            {1,-1,-1}
         };
 
-        Assert.AreEqual(false, returnWinRows(board));
+        board = FlipArray(board); //we flip the array to make it the same as our game board - where 0,0 is the top left.
+
+        model.ReturnGeneralEndConditionMet(out EndConditions endCondition, board, player, out PlayerIcons winningPlayerIcon);
+
+        Assert.AreEqual(EndConditions.End, endCondition);
+        Assert.AreNotEqual(winningPlayerIcon, player.publicPlyerData.playerIcon);
     }
 
     [Test, Category("Losing")]
     public void LoseColumns()
     {
+        GameModel model = GameObject.FindObjectOfType<GameModel>();
+        model.UnitTestSetGameMode();
+        PlayerBase player = new HumanPlayer("test Player", null, PlayerTypes.Human, PlayerIcons.O);
+
         int[,] board = new int[,]
         {
-            {1,0,2},
-            {1,1,2},
-            {0,0,2}
+            {1,-1,0},
+            {1,1,0},
+            {-1,-1,0}
         };
 
-        Assert.AreEqual(false, ReturnWinColumns(board));
+        board = FlipArray(board); //we flip the array to make it the same as our game board - where 0,0 is the top left.
+
+        model.ReturnGeneralEndConditionMet(out EndConditions endCondition, board, player, out PlayerIcons winningPlayerIcon);
+
+        Assert.AreEqual(EndConditions.End, endCondition);
+        Assert.AreNotEqual(winningPlayerIcon, player.publicPlyerData.playerIcon);
     }
 
     [Test, Category("Losing")]
     public void LoseDiagonalLeftBotRightUp()
     {
+        GameModel model = GameObject.FindObjectOfType<GameModel>();
+        model.UnitTestSetGameMode();
+        PlayerBase player = new HumanPlayer("test Player", null, PlayerTypes.Human, PlayerIcons.O);
+
         int[,] board = new int[,]
         {
-            {1,1,2},
-            {0,2,1},
-            {2,0,0}
+            {1,1,0},
+            {-1,0,1},
+            {0,-1,-1}
         };
 
-        Assert.AreEqual(false, ReturnWinDiagonalLeftBotRightUp(board));
+        board = FlipArray(board); //we flip the array to make it the same as our game board - where 0,0 is the top left.
+
+        model.ReturnGeneralEndConditionMet(out EndConditions endCondition, board, player, out PlayerIcons winningPlayerIcon);
+
+        Assert.AreEqual(EndConditions.End, endCondition);
+        Assert.AreNotEqual(winningPlayerIcon, player.publicPlyerData.playerIcon);
     }
 
     [Test, Category("Losing")]
     public void LoseDiagonalRightBotLeftUp()
     {
+        GameModel model = GameObject.FindObjectOfType<GameModel>();
+        model.UnitTestSetGameMode();
+        PlayerBase player = new HumanPlayer("test Player", null, PlayerTypes.Human, PlayerIcons.O);
 
         int[,] board = new int[,]
         {
-            {2,0,1},
-            {1,2,0},
-            {0,1,2}
+            {0,-1,1},
+            {1,0,-1},
+            {-1,1,0}
         };
 
-        Assert.AreEqual(false, ReturnWinDiagonalRightBotLeftUp(board));
+        board = FlipArray(board); //we flip the array to make it the same as our game board - where 0,0 is the top left.
+
+        model.ReturnGeneralEndConditionMet(out EndConditions endCondition, board, player, out PlayerIcons winningPlayerIcon);
+
+        Assert.AreEqual(EndConditions.End, endCondition);
+        Assert.AreNotEqual(winningPlayerIcon, player.publicPlyerData.playerIcon);
     }
     #endregion
 
@@ -134,38 +196,22 @@ public class EditorGameTests
     [Test, Category("Draw")]
     public void Draw()
     {
-        /// 0 in this dummy array means "Empty"
+        GameModel model = GameObject.FindObjectOfType<GameModel>();
+        model.UnitTestSetGameMode();
+        PlayerBase player = new HumanPlayer("test Player", null, PlayerTypes.Human, PlayerIcons.O);
+
         int[,] board = new int[,]
         {
-            {2,1,2},
-            {1,1,2},
-            {2,2,1}
+            {0,1,0},
+            {1,1,0},
+            {0,0,1}
         };
 
+        board = FlipArray(board); //we flip the array to make it the same as our game board - where 0,0 is the top left.
 
-        Assert.AreEqual(true, CheckDraw(board));
-    }
+        model.ReturnGeneralEndConditionMet(out EndConditions endCondition, board, player, out PlayerIcons winningPlayerIcon);
 
-    bool CheckDraw(int[,] board)
-    {
-        ////check all other options of end - then check if board is full - if it is, draw.
-
-        if (returnWinRows(board) || 
-            ReturnWinColumns(board) || 
-            ReturnWinDiagonalLeftBotRightUp(board) ||
-            ReturnWinDiagonalRightBotLeftUp(board))
-        {
-            return false;
-        }
-
-        /// 0 in this dummy array means "Empty"
-        foreach (int playerTestIndex in board)
-        {
-            if (playerTestIndex == 0)
-                return false;
-        }
-
-        return true;
+        Assert.AreEqual(EndConditions.Draw, endCondition);
     }
     #endregion
 
@@ -194,157 +240,23 @@ public class EditorGameTests
     }
     #endregion
 
-    #region End Functions
-    bool returnWinRows(int[,] board)
+    private int[,] FlipArray(int[,] board)
     {
-        for (int row = 0; row < 3; row++)
+        int rowCount = board.GetLength(0); // Number of rows
+        int colCount = board.GetLength(1); // Number of columns
+
+        // Creating a new array with flipped dimensions
+        int[,] flippedBoard = new int[colCount, rowCount];
+
+        for (int i = 0; i < rowCount; i++)
         {
-            int currentPlayerScore = 0;
-            int enemyPlayerScrore = 0;
-
-            for (int column = 0; column < 3; column++)
+            for (int j = 0; j < colCount; j++)
             {
-                if (board[row, column] == currentPlayerIndex)
-                {
-                    currentPlayerScore++;
-                    enemyPlayerScrore = 0;
-
-                    if (currentPlayerScore == 3)
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    if (board[row, column] != 0)
-                    {
-                        currentPlayerScore = 0;
-                        enemyPlayerScrore++;
-
-                        if (enemyPlayerScrore == 3)
-                        {
-                            return false;
-                        }
-                    }
-                }
+                flippedBoard[j, i] = board[i, j]; // Assigning flipped values
             }
         }
 
-        return false;
+        return flippedBoard;
     }
-    bool ReturnWinColumns(int[,] board)
-    {
-        for (int column = 0; column < 3; column++)
-        {
-            int currentPlayerScore = 0;
-            int enemyPlayerScrore = 0;
 
-            for (int row = 0; row < 3; row++)
-            {
-                if (board[row, column] == currentPlayerIndex)
-                {
-                    currentPlayerScore++;
-                    enemyPlayerScrore = 0;
-
-                    if (currentPlayerScore == 3)
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    if (board[row, column] != 0)
-                    {
-                        currentPlayerScore = 0;
-                        enemyPlayerScrore++;
-
-                        if (enemyPlayerScrore == 3)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-    bool ReturnWinDiagonalLeftBotRightUp(int[,] board)
-    {
-        int currentPlayerScore = 0;
-        int enemyPlayerScrore = 0;
-
-        int rowOffset = 3;
-
-        for (int column = 0; column < 3; column++)
-        {
-            rowOffset--;
-
-            if (board[rowOffset, column] == currentPlayerIndex)
-            {
-                currentPlayerScore++;
-                enemyPlayerScrore = 0;
-
-                if (currentPlayerScore == 3)
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                if (board[rowOffset, column] != 0)
-                {
-                    currentPlayerScore = 0;
-                    enemyPlayerScrore++;
-
-                    if (enemyPlayerScrore == 3)
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-    bool ReturnWinDiagonalRightBotLeftUp(int[,] board)
-    {
-        int currentPlayerScore = 0;
-        int enemyPlayerScrore = 0;
-
-        int columnOffset = 3;
-        int rowOffset = 3;
-
-        for (int column = columnOffset - 1; column >= 0; column--)
-        {
-            rowOffset--;
-
-            if (board[rowOffset, column] == currentPlayerIndex)
-            {
-                currentPlayerScore++;
-                enemyPlayerScrore = 0;
-
-                if (currentPlayerScore == 3)
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                if (board[rowOffset, column] != 0)
-                {
-                    currentPlayerScore = 0;
-                    enemyPlayerScrore++;
-
-                    if (enemyPlayerScrore == 3)
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-    #endregion
 }

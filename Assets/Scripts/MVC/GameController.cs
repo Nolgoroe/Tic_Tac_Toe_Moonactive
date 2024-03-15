@@ -151,10 +151,10 @@ public class GameController : MonoBehaviour
     {
         //called from both the AI and Human players after they mark a cell.
 
-        Cell[,] boardCell = gameModelRef.ReturnBoardCellsArray();
+        int[,] boardCells = gameModelRef.ReturnBoardCellsArray();
 
 
-        if (gameModelRef.ReturnGeneralEndConditionMet(out EndConditions endCondition, boardCell, gameModelRef.ReturnCurrentPlayer(), out PlayerIcons winningPlayer))
+        if (gameModelRef.ReturnGeneralEndConditionMet(out EndConditions endCondition, boardCells, gameModelRef.ReturnCurrentPlayer(), out PlayerIcons winningPlayer))
         {
             SetGameOver(endCondition);
         }

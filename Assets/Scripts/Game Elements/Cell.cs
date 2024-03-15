@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class Cell : MonoBehaviour, IPointerClickHandler
 {
-    const int EMPTY_CELL_INDEX = -1; //-1 indicates "empty" cell
-
     public Action<Cell> OnClickOnCell;
     public Action<Cell> OnRemoveCell;
 
@@ -16,16 +14,17 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
     [Header("Gameplay")]
     [SerializeField] bool isMarked;
-    [SerializeField] int MarkedIconIndex = EMPTY_CELL_INDEX; // this is set by the player enum - later used for checks. starts at -1 to indicate empty.
+    [SerializeField] int MarkedIconIndex = -1; // this is set by the player enum - later used for checks. starts at -1 to indicate empty.
     [SerializeField] Vector2Int cellCoordinates = new Vector2Int(-1,-1);
 
     [Header("Animation")]
     [SerializeField] float scaleUpSpeed;
 
     #region Initialization
-    public void InitCell(int x, int y)
+    public void InitCell(int x, int y, int emptyCellIndex)
     {
         cellCoordinates = new Vector2Int(x, y);
+        MarkedIconIndex = emptyCellIndex;
     }
 
     //default constructor
@@ -74,11 +73,11 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         MarkedIconIndex = _MarkedIconIndex;
     }
 
-    public void UnMarkCell()
+    public void UnMarkCell(int emptyCellIndex)
     {
         SetCellSprite(null);
         SetIsMarked(false);
-        SetMarkingPlayerIndex(EMPTY_CELL_INDEX); // -1 is default for empty.
+        SetMarkingPlayerIndex(emptyCellIndex); // -1 is default for empty.
     }
 
     #endregion
@@ -115,10 +114,6 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     public Vector2Int ReturnCellCoordinatesInBoard()
     {
         return cellCoordinates;
-    }
-    public int ReturnEmptyCellIndex()
-    {
-        return EMPTY_CELL_INDEX;
     }
     #endregion
 

@@ -8,7 +8,7 @@ public class GameModeSO : ScriptableObject
     [SerializeField] int height = 3;
     [SerializeField] float timeDelayAITurn = 1;
     [SerializeField] bool allowUndo = false;
-    [SerializeField] PlayerData[] modePlayers;
+    [SerializeField] PlayerData[] modePlayers = null;
 
     public PlayerData[] modePublicModePlayers => modePlayers;
     public Vector2 modeBoardWidthAndHeight => new Vector2(width, height);
