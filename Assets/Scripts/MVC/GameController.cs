@@ -4,6 +4,9 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
+    //I went with the classic MVC design pattern since it allows for more scalable, debuggable and cleaner code.
+    //Easy to implement and edit.
+
     public static GameController Instance; 
     public static bool isGameOver = false;
 
