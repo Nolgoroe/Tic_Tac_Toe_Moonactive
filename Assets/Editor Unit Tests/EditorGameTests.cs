@@ -16,6 +16,7 @@ public class EditorGameTests
     [Test, Category("Winning")]
     public void WinRows()
     {
+        //arrange
         GameModel model = GameObject.FindObjectOfType<GameModel>();
         model.UnitTestSetGameMode();
         PlayerBase player = new HumanPlayer("test Player", null, PlayerTypes.Human, PlayerIcons.O);
@@ -27,10 +28,12 @@ public class EditorGameTests
             {-1, -1, -1}
         };
 
+        //act
         board = FlipArray(board); //we flip the array to make it the same as our game board - where 0,0 is the top left.
 
         model.ReturnGeneralEndConditionMet(out EndConditions endCondition, board, player, out PlayerIcons winningPlayerIcon);
 
+        //assert
         Assert.AreEqual(EndConditions.End, endCondition);
         Assert.AreEqual(winningPlayerIcon, player.publicPlyerData.playerIcon);
     }
