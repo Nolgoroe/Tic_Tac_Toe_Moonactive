@@ -9,6 +9,7 @@ public enum Sounds
     Timeout,
     MenuMusic,
     GameMusic,
+    Draw,
 }
 
 [System.Serializable]

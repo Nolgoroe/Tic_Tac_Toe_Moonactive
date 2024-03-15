@@ -10,6 +10,7 @@ public class GameView : MonoBehaviour
     private const string WIN_STRING = "Wins!";
     private const string TIMER_STRING = "Time: ";
     private const string TIMEOUT_STRING = "Timeout... :(";
+    private const string DRAW_STRING = "DRAW";
     private const string INPUT_FIELD_ERROR_STRING = "Error in input field - must be a number larger than 0";
 
     [HideInInspector]
@@ -113,7 +114,8 @@ public class GameView : MonoBehaviour
                 SoundManager.Instance.PlaySoundOneShot(Sounds.Win);
                 break;
             case EndConditions.Draw:
-                text = "DRAW";
+                text = DRAW_STRING;
+                SoundManager.Instance.PlaySoundOneShot(Sounds.Draw);
                 break;
             case EndConditions.Timeout:
                 text = player.publicPlyerData.playerName + " " + TIMEOUT_STRING;
