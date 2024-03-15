@@ -77,7 +77,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     {
         SetCellSprite(null);
         SetIsMarked(false);
-        SetMarkingPlayerIndex(emptyCellIndex); // -1 is default for empty.
+        SetMarkingPlayerIndex(emptyCellIndex);
     }
 
     #endregion
