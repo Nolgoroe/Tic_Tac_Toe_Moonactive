@@ -200,7 +200,7 @@ public class GameController : MonoBehaviour
     public void RestartGame()
     {
         //called from button
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void Hint()
