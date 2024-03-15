@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public class PlayerFactory
@@ -12,15 +10,15 @@ public class PlayerFactory
 
     public static List<PlayerBase> GetPlayers(GameModeSO gameMode)
     {
-        List<PlayerBase> playerList = new List<PlayerBase>(gameMode.publicModePlayers.Length);
+        List<PlayerBase> playerList = new List<PlayerBase>(gameMode.modePublicModePlayers.Length);
 
         List<PlayerIcons> availableTypes = Enum.GetValues(typeof(PlayerIcons)).Cast<PlayerIcons>().ToList();
 
-        foreach (PlayerData playerData in gameMode.publicModePlayers)
+        foreach (PlayerData playerData in gameMode.modePublicModePlayers)
         {
             int randomPlayerIconIndex = UnityEngine.Random.Range(0, availableTypes.Count); //randomise icon between X and O
 
-            playerList.Add(CreatePlayer(playerData.playerName, playerData, availableTypes[randomPlayerIconIndex]));
+            playerList.Add(CreatePlayer(playerData.playerName, playerData, availableTypes[randomPlayerIconIndex], gameMode.modeTimeDelayAITurn));
 
             availableTypes.RemoveAt(randomPlayerIconIndex); //remove the icon selected so that the next player created can only be another kind of player. This also supports scaling for more Icons.
         }
@@ -28,7 +26,7 @@ public class PlayerFactory
         return playerList;
     }
 
-    private static PlayerBase CreatePlayer(string name, PlayerData playerData, PlayerIcons randomisedPlayerIcon)
+    private static PlayerBase CreatePlayer(string name, PlayerData playerData, PlayerIcons randomisedPlayerIcon, float AITimeDelay)
     {
         Sprite playerIconSprite = RetrunPlayerSprite(randomisedPlayerIcon);
 
@@ -37,7 +35,9 @@ public class PlayerFactory
             case PlayerTypes.Human:
                 return new HumanPlayer(name, playerIconSprite, playerData.playerType, randomisedPlayerIcon);
             case PlayerTypes.AI:
-                return new AIPlayer(name, playerIconSprite, playerData.playerType, randomisedPlayerIcon);
+                AIPlayer aiPlayer = new AIPlayer(name, playerIconSprite, playerData.playerType, randomisedPlayerIcon);
+                aiPlayer.SetTimeDelayTurn(AITimeDelay);
+                return aiPlayer;
             default:
                 return null;
         }

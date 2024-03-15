@@ -1,7 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement; //temp
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -64,13 +63,13 @@ public class GameController : MonoBehaviour
 
         yield return null;
         //Init game Model
-        GameModelStartup(gameModeSO); //is it ok we pass the game mode through to here?
+        GameModelStartup(gameModeSO);
 
         //init game view
         ViewStartup();
 
         //allow undo only if the gamemodeSO allows it.
-        if(!gameModelRef.ReturnCurrentGameModeSO().modelAllowUndo)
+        if(!gameModelRef.ReturnCurrentGameModeSO().modeAllowUndo)
         {
             // let view remove the undo button
             gameViewRef.TogglePVCButtons(false);
@@ -95,7 +94,7 @@ public class GameController : MonoBehaviour
     private void ViewStartup()
     {
         gameViewRef.GameViewStartup();
-        gameViewRef.UpdatePlayerView(gameModelRef.ReturnCurrentPlayer()); //temp
+        gameViewRef.UpdatePlayerView(gameModelRef.ReturnCurrentPlayer());
     }
     #endregion
 
@@ -131,10 +130,16 @@ public class GameController : MonoBehaviour
     private void SetGameOver(EndConditions endCondition)
     {
         PlayerBase currentPlayer = gameModelRef.ReturnCurrentPlayer();
-        isGameOver = true; //is this temp??
+        isGameOver = true;
 
-        gameViewRef.SetEndScreenText(endCondition, currentPlayer);
         //this is where we pass the end condition and player to the view and it manages what to show in a switch.
+        gameViewRef.SetEndScreenText(endCondition, currentPlayer);
+    }
+
+    private Cell ReturnRandomCell()
+    {
+        //used to show Hint
+        return gameModelRef.ReturnRandomCellInArray();
     }
     #endregion
 
@@ -159,14 +164,14 @@ public class GameController : MonoBehaviour
 
         cell.OnRemoveCell += gameModelRef.CellRemoveMarkOnBoard;
     }
+
+    public void ManualEndTurnPlayer(PlayerBase player)
+    {
+        player.TurnEnd();
+    }
     #endregion
 
     #region Public Return Data
-    public Cell ReturnRandomCell()
-    {
-        //Used by AI to find cell to mark
-        return gameModelRef.ReturnRandomCellInArray();
-    }
     public Cell ReturnAIChoice()
     {
         //Used by AI to find cell to mark
@@ -187,7 +192,7 @@ public class GameController : MonoBehaviour
 
         GameModeSO chosenGameMode = gameModeSO; 
 
-        StartCoroutine(InitGame(chosenGameMode)); //is this ok? to pass it through?
+        StartCoroutine(InitGame(chosenGameMode));
     }
     public void RestartGame()
     {
@@ -211,17 +216,5 @@ public class GameController : MonoBehaviour
     {
         timeForTurn = value;
     }
-    #endregion
-
-
-
-
-
-
-
-
-
-
-
-    
+    #endregion  
 }

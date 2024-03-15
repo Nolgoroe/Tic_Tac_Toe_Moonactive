@@ -15,16 +15,16 @@ MonoBehaviour:
   requiredComboToWin: 3
   width: 3
   height: 3
-  timeForTurn: 5
+  timeDelayAITurn: 1
   allowUndo: 0
   modePlayers:
   - playerName: AI 1
     playerType: 1
     isOnline: 0
-    playerIconIndex: 0
+    playerIcon: 0
     playerIconSprite: {fileID: 0}
   - playerName: AI 2
     playerType: 1
     isOnline: 0
-    playerIconIndex: 0
+    playerIcon: 0
     playerIconSprite: {fileID: 0}

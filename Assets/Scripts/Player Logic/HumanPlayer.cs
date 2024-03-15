@@ -1,5 +1,4 @@
- using System.Collections;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class HumanPlayer : PlayerBase
@@ -11,9 +10,9 @@ public class HumanPlayer : PlayerBase
 
     public override IEnumerator TurnStart()
     {
-        //nothing unique happens on the start of the player for now - the cells just wait for input on them.
+        //nothing unique happens on the start of the player - the cells just wait for input on them.
         //the action of the "OnClickOnCell" are shot - cells get marked and then, in the model, it also checks if the controller in human or not.
-        //if the controller is human - then the model (????? why model???) temp... calls the turn end of the human player.
+        //if the controller is human - then the model calls the turn end of the human player on the game controller.
         yield return null;
     }
 

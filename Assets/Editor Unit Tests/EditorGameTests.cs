@@ -10,12 +10,6 @@ public class EditorGameTests
     /// AAA - ARRANGE, ACT, ASSERT
     /// </summary>
 
-    //check all unit tests with Lior - //Temp??
-    //There is no connection to the actual gameplay logic except for the for loops.. is that ok?
-
-
-    // A Test behaves as an ordinary method
-
     int currentPlayerIndex = 1;
 
     #region player win
@@ -148,14 +142,15 @@ public class EditorGameTests
             {2,2,1}
         };
 
-        ////check all other options of winning - then check if board is full - if it is, draw.
 
         Assert.AreEqual(true, CheckDraw(board));
     }
 
     bool CheckDraw(int[,] board)
     {
-        if(returnWinRows(board) || 
+        ////check all other options of end - then check if board is full - if it is, draw.
+
+        if (returnWinRows(board) || 
             ReturnWinColumns(board) || 
             ReturnWinDiagonalLeftBotRightUp(board) ||
             ReturnWinDiagonalRightBotLeftUp(board))
@@ -178,7 +173,6 @@ public class EditorGameTests
     [Test, Category("Undo")]
     public void Undo()
     {
-        //Make sure to check this with Lior for an upgrade. it feels too... simple to me
         int moveBackOnUndo = 2;
         int expectedListCount = 4;
 

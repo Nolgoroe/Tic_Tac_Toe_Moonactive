@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -22,9 +20,9 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     [SerializeField] Vector2Int cellCoordinates = new Vector2Int(-1,-1);
 
     [Header("Animation")]
-    [SerializeField] float scaleUpSpeed; 
+    [SerializeField] float scaleUpSpeed;
 
-
+    #region Initialization
     public void InitCell(int x, int y)
     {
         cellCoordinates = new Vector2Int(x, y);
@@ -35,6 +33,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     {
 
     }
+
     //copy constructor
     public Cell(Cell cellToCopy)
     {
@@ -42,11 +41,11 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         MarkedIconIndex = cellToCopy.MarkedIconIndex;
         cellCoordinates = cellToCopy.cellCoordinates;
     }
+    #endregion
 
     #region Marking and Unmarking
     public void MarkCell(PlayerBase currentPlayer)
     {
-        //is it ok for this function.. and other functions to be public because they are used as actions?
         PlayerData currentPlayerData = currentPlayer.publicPlyerData;
 
         SetCellSprite(currentPlayerData.playerIconSprite);
@@ -77,7 +76,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
     public void UnMarkCell()
     {
-        SetCellSprite(null); //destory the cell in the slot??
+        SetCellSprite(null);
         SetIsMarked(false);
         SetMarkingPlayerIndex(EMPTY_CELL_INDEX); // -1 is default for empty.
     }
@@ -87,7 +86,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     #region Input Detection
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (isMarked || !GameController.Instance.ReturnCurrentPlayerIsHuman()) return; //display a ui message here that the cell is not empty in the end. //temp
+        if (isMarked || !GameController.Instance.ReturnCurrentPlayerIsHuman()) return;
 
         ActivateOnClickOnCellAction();
     }
@@ -96,7 +95,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     {
         //called directly from the AI player aswell to simulate click
 
-        if (GameController.isGameOver) return; //temp???
+        if (GameController.isGameOver) return;
 
         OnClickOnCell?.Invoke(this);
     }

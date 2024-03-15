@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class AnimateOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class AnimateOnHoverBool : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private string parameterName;
     private Animator anim;

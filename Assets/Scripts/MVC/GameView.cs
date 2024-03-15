@@ -1,14 +1,17 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
 using TMPro;
 
 
 public class GameView : MonoBehaviour
 {
     #region hidden data
+    private const string WIN_STRING = "Wins!";
+    private const string TIMER_STRING = "Time: ";
+    private const string TIMEOUT_STRING = "Timeout... :(";
+    private const string INPUT_FIELD_ERROR_STRING = "Error in input field - must be a number larger than 0";
+
     [HideInInspector]
     [SerializeField] GameController gameController;
     #endregion
@@ -39,11 +42,13 @@ public class GameView : MonoBehaviour
     [SerializeField] Slider volumeControlSlider;
     [SerializeField] TMP_InputField turnTimeInput;
     [SerializeField] TMP_Text systemMessages;
+    [SerializeField] float systemMessagesDelay = 3;
 
+    #region Init Functions
     private void Awake()
     {
-        //I know this is generally frowned upon.. but it is called once on awake for the rest of the game.
-        // the memory and CPU footprint of this is negligible in my opinion.
+        // Called once on awake for the rest of the game.
+        // the memory and CPU footprint of this is negligible + it takes care of the sound all buttons make quite easily.
         Button[] allSceneButtons = FindObjectsOfType<Button>();
         foreach (Button button in allSceneButtons)
         {
@@ -61,8 +66,7 @@ public class GameView : MonoBehaviour
 
         SetDifficultyButtonsCallbacks();
     }
-
-
+    #endregion
 
     #region Public Actions
     public void InitGameView(GameController _gameController)
@@ -89,7 +93,6 @@ public class GameView : MonoBehaviour
 
     #endregion
 
-
     #region Screen Management
     public void TogglePVCButtons(bool enable)
     {
@@ -101,20 +104,19 @@ public class GameView : MonoBehaviour
     }
     public void SetEndScreenText(EndConditions endCondition, PlayerBase player)
     {
-        //I know there are some better ways to manage strings - is this enough?? temp flag.
         string text = "";
 
         switch (endCondition)
         {
             case EndConditions.End:
-                text = player.publicPlyerData.playerName + " " + "Wins!";
+                text = player.publicPlyerData.playerName + " " + WIN_STRING;
                 SoundManager.Instance.PlaySoundOneShot(Sounds.Win);
                 break;
             case EndConditions.Draw:
                 text = "DRAW";
                 break;
             case EndConditions.Timeout:
-                text = player.publicPlyerData.playerName + " " + "Timeout... :(";
+                text = player.publicPlyerData.playerName + " " + TIMEOUT_STRING;
                 SoundManager.Instance.PlaySoundOneShot(Sounds.Timeout);
                 break;
             case EndConditions.None:
@@ -132,11 +134,10 @@ public class GameView : MonoBehaviour
     }
     public void UpdateTurnTimer(float time)
     {
-        timerText.text = "Time: " + Mathf.Ceil(time).ToString();
+        timerText.text = TIMER_STRING + Mathf.Ceil(time).ToString();
     }
 
     #endregion
-
 
     #region Button Related
     public void SetDifficultyButtonsCallbacks()
@@ -152,7 +153,7 @@ public class GameView : MonoBehaviour
 
     public void OnChangeSoundModifier()
     {
-        SoundManager.Instance.OnChangeSoundModifier(volumeControlSlider.value);
+        SoundManager.Instance.OnChangeSoundVolumeModifier(volumeControlSlider.value);
     }
     public void ToggleSettings()
     {
@@ -174,17 +175,18 @@ public class GameView : MonoBehaviour
         }
         else
         {
-            StartCoroutine(DisplaySettingsSystemMessage("Error in input field - must be a number larger than 0"));
+            StartCoroutine(DisplaySettingsSystemMessage(INPUT_FIELD_ERROR_STRING));
         }
     }
 
     #endregion
 
-
+    #region Privae Actions
     private IEnumerator DisplaySettingsSystemMessage(string message)
     {
         systemMessages.text = message;
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(systemMessagesDelay);
         systemMessages.text = " ";
     }
+    #endregion
 }

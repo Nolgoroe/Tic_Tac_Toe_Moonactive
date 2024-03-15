@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -34,11 +33,7 @@ public abstract class PlayerBase
 
     public abstract IEnumerator TurnStart();
     public abstract void TurnEnd();
-
-
-
     public PlayerData publicPlyerData => playerData;
-
 
     private void OnDisable()
     {

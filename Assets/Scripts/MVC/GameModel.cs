@@ -1,10 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using System.Linq;
-using System;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class GameModel : MonoBehaviour
 {
@@ -31,10 +27,6 @@ public class GameModel : MonoBehaviour
     [SerializeField] List<Cell> allEmptyGameCells;
     private Cell[,] cellsArray;
 
-    //[Header("End conditions data")]
-    //[SerializeField] int maxNumberOfCells;
-    ////[SerializeField] int currentFilledCells;
-
 
     private void Start()
     {
@@ -60,7 +52,7 @@ public class GameModel : MonoBehaviour
 
         if (ReturnIsHumanControlling())
         {
-            currentPlayer.TurnEnd(); //temp?? is this here?
+            gameController.ManualEndTurnPlayer(currentPlayer);
         }
 
     }
@@ -153,8 +145,8 @@ public class GameModel : MonoBehaviour
         // 0,0 is top Left.
         winningPlayer = PlayerIcons.O;
 
-        int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
+        int boardWidth = (int)gameModeSO.modeBoardWidthAndHeight.x;
+        int boardHeight = (int)gameModeSO.modeBoardWidthAndHeight.y;
 
         for (int row = 0; row < boardHeight; row++)
         {
@@ -168,7 +160,7 @@ public class GameModel : MonoBehaviour
                     currentPlayerScore++;
                     enemyPlayerScrore = 0;
 
-                    if (currentPlayerScore == gameModeSO.modelRequiredComboToWin)
+                    if (currentPlayerScore == gameModeSO.modeRequiredComboToWin)
                     {
                         winningPlayer = playerIcon;
 
@@ -182,7 +174,7 @@ public class GameModel : MonoBehaviour
                         currentPlayerScore = 0;
                         enemyPlayerScrore++;
 
-                        if (enemyPlayerScrore == gameModeSO.modelRequiredComboToWin)
+                        if (enemyPlayerScrore == gameModeSO.modeRequiredComboToWin)
                         {
                             winningPlayer = ReturnOtherPlayer(playerIcon).publicPlyerData.playerIcon;
 
@@ -201,8 +193,8 @@ public class GameModel : MonoBehaviour
         // 0,0 is top Left.
         winningPlayer = PlayerIcons.O;
 
-        int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
+        int boardWidth = (int)gameModeSO.modeBoardWidthAndHeight.x;
+        int boardHeight = (int)gameModeSO.modeBoardWidthAndHeight.y;
 
         for (int column = 0; column < boardWidth; column++)
         {
@@ -216,7 +208,7 @@ public class GameModel : MonoBehaviour
                     currentPlayerScore++;
                     enemyPlayerScrore = 0;
 
-                    if (currentPlayerScore == gameModeSO.modelRequiredComboToWin)
+                    if (currentPlayerScore == gameModeSO.modeRequiredComboToWin)
                     {
                         winningPlayer = playerIcon;
                         return true;
@@ -229,7 +221,7 @@ public class GameModel : MonoBehaviour
                         currentPlayerScore = 0;
                         enemyPlayerScrore++;
 
-                        if (enemyPlayerScrore == gameModeSO.modelRequiredComboToWin)
+                        if (enemyPlayerScrore == gameModeSO.modeRequiredComboToWin)
                         {
                             winningPlayer = ReturnOtherPlayer(playerIcon).publicPlyerData.playerIcon;
 
@@ -250,8 +242,8 @@ public class GameModel : MonoBehaviour
         int currentPlayerScore = 0;
         int enemyPlayerScrore = 0;
 
-        int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
+        int boardWidth = (int)gameModeSO.modeBoardWidthAndHeight.x;
+        int boardHeight = (int)gameModeSO.modeBoardWidthAndHeight.y;
 
         int rowOffset = boardHeight;
 
@@ -264,7 +256,7 @@ public class GameModel : MonoBehaviour
                 currentPlayerScore++;
                 enemyPlayerScrore = 0;
 
-                if (currentPlayerScore == gameModeSO.modelRequiredComboToWin)
+                if (currentPlayerScore == gameModeSO.modeRequiredComboToWin)
                 {
                     winningPlayer = playerIcon;
                     return true;
@@ -277,7 +269,7 @@ public class GameModel : MonoBehaviour
                     currentPlayerScore = 0;
                     enemyPlayerScrore++;
 
-                    if (enemyPlayerScrore == gameModeSO.modelRequiredComboToWin)
+                    if (enemyPlayerScrore == gameModeSO.modeRequiredComboToWin)
                     {
                         winningPlayer = ReturnOtherPlayer(playerIcon).publicPlyerData.playerIcon;
 
@@ -291,14 +283,14 @@ public class GameModel : MonoBehaviour
     }
     private bool ReturnWinDiagonalRightBotLeftUp(Cell[,] _cellsArray,  PlayerIcons playerIcon, out PlayerIcons winningPlayer)
     {
-        // 2,2 is bottom Left.
+        // 2,2 is bottom Right.
         winningPlayer = PlayerIcons.O;
 
         int currentPlayerScore = 0;
         int enemyPlayerScrore = 0;
 
-        int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
+        int boardWidth = (int)gameModeSO.modeBoardWidthAndHeight.x;
+        int boardHeight = (int)gameModeSO.modeBoardWidthAndHeight.y;
 
         int rowOffset = boardHeight;
 
@@ -311,7 +303,7 @@ public class GameModel : MonoBehaviour
                 currentPlayerScore++;
                 enemyPlayerScrore = 0;
 
-                if (currentPlayerScore == gameModeSO.modelRequiredComboToWin)
+                if (currentPlayerScore == gameModeSO.modeRequiredComboToWin)
                 {
                     winningPlayer = playerIcon;
 
@@ -325,7 +317,7 @@ public class GameModel : MonoBehaviour
                     currentPlayerScore = 0;
                     enemyPlayerScrore++;
 
-                    if (enemyPlayerScrore == gameModeSO.modelRequiredComboToWin)
+                    if (enemyPlayerScrore == gameModeSO.modeRequiredComboToWin)
                     {
                         winningPlayer = ReturnOtherPlayer(playerIcon).publicPlyerData.playerIcon;
 
@@ -346,7 +338,7 @@ public class GameModel : MonoBehaviour
 
     public Cell ReturnRandomCellInArray()
     {
-        //used by the AI player to detect an empty cell to mark.
+        // used by the Hint system to pass a hint cell.
         // must pass through the controller to enter this function.
 
         Cell foundCell = null;
@@ -372,7 +364,7 @@ public class GameModel : MonoBehaviour
 
 
         return foundCell;
-    } // this might need to go away - temp - AI moved to MiniMax
+    }
 
     public GameModeSO ReturnCurrentGameModeSO()
     {
@@ -393,8 +385,8 @@ public class GameModel : MonoBehaviour
     #region Private Actions
     private void SpawnGridCells()
     {
-        int boardWidth = (int)gameModeSO.boardWidthAndHeight.x;
-        int boardHeight = (int)gameModeSO.boardWidthAndHeight.y;
+        int boardWidth = (int)gameModeSO.modeBoardWidthAndHeight.x;
+        int boardHeight = (int)gameModeSO.modeBoardWidthAndHeight.y;
 
         cellsArray = new Cell[boardWidth, boardHeight];
 
@@ -420,6 +412,13 @@ public class GameModel : MonoBehaviour
     #region Mini Max AI Algo
     public Cell CallMiniMaxAlgo()
     {
+        // The mini max algorithm allows the AI to check all board possibilities by simulating gameplay, at a given "depth".
+        // depth = number of moves the AI is allowed to predict.
+        // The higher the depth, the harder the AI becomes.
+        // This algorithm is quite expensive - so I have also used the "alpha beta pruning" search algorithm to optemize it.
+        // alpha beta pruning basically means that the mini max will stop searching for options once it thinks it has found the best one.
+
+
         //this will return a cell to the AI
         int bestScore = int.MinValue;
         Cell chosenCell = null;
@@ -524,11 +523,13 @@ public class GameModel : MonoBehaviour
                 break;
         }
 
-        return -2;
+        return 0; // return 0 of there was no end codition to make all cells equal in their value.
     }
 
     private PlayerBase ReturnOtherPlayer(PlayerIcons currentPlayerIcon)
     {
+        //return the next player in the players array, given the current player.
+
         PlayerBase foundPlayer = players.Where(x => x.publicPlyerData.playerIcon == currentPlayerIcon).FirstOrDefault();
         if(foundPlayer == null)
         {
