@@ -763,7 +763,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Open Settings
+  m_text: Settings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b97a34b5d268f154bafbfef4bdb0f3db, type: 2}
   m_sharedMaterial: {fileID: 2413164684634676601, guid: b97a34b5d268f154bafbfef4bdb0f3db, type: 2}
@@ -790,7 +790,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.2
+  m_fontSize: 35.45
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1857,6 +1857,7 @@ MonoBehaviour:
   volumeControlSlider: {fileID: 1148392941}
   turnTimeInput: {fileID: 230544918}
   systemMessages: {fileID: 77146024}
+  systemMessagesDelay: 3
 --- !u!1 &293283423
 GameObject:
   m_ObjectHideFlags: 0
@@ -7695,7 +7696,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Open Settings
+  m_text: Settings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b97a34b5d268f154bafbfef4bdb0f3db, type: 2}
   m_sharedMaterial: {fileID: 2413164684634676601, guid: b97a34b5d268f154bafbfef4bdb0f3db, type: 2}
@@ -7722,7 +7723,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.2
+  m_fontSize: 35.45
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
